@@ -1,0 +1,120 @@
+/* ============================================
+   App.css
+   Global app styles and animation system
+   ============================================ */
+
+/* ============================================
+   DEVICE SCREEN
+   The "screen" area inside the device frame
+   ============================================ */
+.device-screen {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+/* ============================================
+   APP CONTAINER (OVERLAY)
+   Renders on top of HomeScreen with animations
+   ============================================ */
+.app-container {
+  position: absolute;
+  inset: 0;
+  z-index: var(--z-app);
+  background: rgba(0, 0, 0, 0.95);
+  overflow: hidden;
+
+  /* Transform origin is set dynamically via CSS variables from the icon position */
+  transform-origin: var(--app-origin-x, 50%) var(--app-origin-y, 50%);
+}
+
+/* ============================================
+   APP CONTAINER HIDDEN STATE
+   When idle on home screen, hide the overlay
+   ============================================ */
+.app-container--hidden {
+  pointer-events: none;
+  opacity: 0;
+  visibility: hidden;
+}
+
+/* ============================================
+   APP OPENING ANIMATION
+   Zoom in from icon position to full screen
+   ============================================ */
+.app-container--opening {
+  animation: appOpen var(--animation-app-open) var(--spring-bounce) forwards;
+}
+
+/* ============================================
+   APP CLOSING ANIMATION
+   Zoom out from full screen back to icon position
+   ============================================ */
+.app-container--closing {
+  animation: appClose var(--animation-app-close) var(--spring-smooth) forwards;
+}
+
+/* ============================================
+   APP OPEN/CLOSE KEYFRAMES
+   These scale from the transform-origin point
+   ============================================ */
+@keyframes appOpen {
+  from {
+    transform: scale(0.15);
+    opacity: 0;
+    border-radius: var(--icon-border-radius);
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+    border-radius: 0;
+  }
+}
+
+@keyframes appClose {
+  from {
+    transform: scale(1);
+    opacity: 1;
+    border-radius: 0;
+  }
+  to {
+    transform: scale(0.15);
+    opacity: 0;
+    border-radius: var(--icon-border-radius);
+  }
+}
+
+/* ============================================
+   WALLPAPER
+   iOS 6 style water droplet/ripple background
+   ============================================ */
+.wallpaper {
+  position: absolute;
+  inset: 0;
+  z-index: var(--z-wallpaper);
+
+  /* Fallback color */
+  background-color: #061219;
+
+  /* Image wallpaper */
+  background-image: url('./assets/wallpaper.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+/* Subtle water ripple texture overlay */
+.wallpaper__ripples {
+  position: absolute;
+  inset: 0;
+  background:
+    repeating-radial-gradient(
+      ellipse at center,
+      transparent 0px,
+      transparent 40px,
+      rgba(255, 255, 255, 0.02) 41px,
+      transparent 42px
+    );
+  opacity: 0.6;
+}

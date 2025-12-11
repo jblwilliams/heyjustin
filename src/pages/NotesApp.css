@@ -1,0 +1,493 @@
+/* ============================================
+   NotesApp Styles
+   iOS 6 Skeuomorphic Yellow Legal Pad
+   ============================================ */
+
+.notes-app {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  background: #fffef0;
+  overflow: hidden;
+
+  /* Entrance animation */
+  animation: fadeIn 0.3s ease-out;
+}
+
+/* ============================================
+   LEATHER HEADER
+   Rich brown leather with texture and stitching
+   ============================================ */
+.notes-header {
+  position: relative;
+  height: 64px;
+  min-height: 64px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between; /* Changed to space-between for 3-col layout */
+  padding-bottom: 10px; /* Reduced padding slightly */
+  padding-left: 8px;
+  padding-right: 8px;
+  z-index: 10;
+}
+
+/* Leather texture background */
+.notes-header__leather {
+  position: absolute;
+  inset: 0;
+  background:
+    /* Leather grain texture */
+    var(--texture-leather),
+    /* Leather gradient */
+    linear-gradient(
+      180deg,
+      #c4a06a 0%,
+      #a67c52 8%,
+      #8b6914 35%,
+      #7a5d12 65%,
+      #5c4a10 100%
+    );
+  background-blend-mode: soft-light, normal;
+
+  /* Depth with inner shadows */
+  box-shadow:
+    inset 0 -3px 6px rgba(0, 0, 0, 0.35),
+    inset 0 2px 3px rgba(255, 255, 255, 0.12),
+    0 4px 10px rgba(0, 0, 0, 0.35);
+}
+
+/* Stitching detail along bottom edge */
+.notes-header__stitching {
+  position: absolute;
+  bottom: 7px;
+  left: 10px;
+  right: 10px;
+  height: 2px;
+  border-bottom: 1px dashed rgba(45, 30, 5, 0.6);
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.15);
+}
+
+/* Header Columns */
+.notes-header__left,
+.notes-header__right {
+    width: 80px; /* Fixed width for balance */
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2;
+    margin-bottom: 2px;
+}
+
+.notes-header__left {
+    justify-content: flex-start;
+    transition: opacity 0.2s ease;
+    opacity: 0;
+    pointer-events: none;
+}
+.notes-header__left.visible {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+/* Title text */
+.notes-header__title {
+  position: relative;
+  font-family: var(--font-notes-title);
+  font-size: 20px;
+  font-weight: normal;
+  color: #f5f0dc;
+  text-shadow:
+    0 -1px 1px rgba(0, 0, 0, 0.5),
+    0 1px 0 rgba(255, 255, 255, 0.1);
+  margin: 0;
+  margin-bottom: 2px;
+  z-index: 1;
+  max-width: 60%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  text-align: center;
+  flex: 1;
+}
+
+/* Back button */
+.notes-header__back {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  height: 30px;
+  display: flex;
+  align-items: center;
+}
+
+/* iOS 6 Back Button Shape (CSS shapes) */
+.notes-header__back-shape {
+    position: relative;
+    height: 29px;
+    padding: 0 10px 0 12px;
+    background: linear-gradient(180deg, #6d1a0c 0%, #4a0f06 100%); /* Reddish brown for Notes app back button specifically? Or just standard? Notes app usually standard black/brown or specific paper style. Let's stick to standard dark leather style button */
+    /* Actually standard iOS 6 back button is a specific shape. We can approximate with border-radius */
+    background: linear-gradient(180deg, #5c4a10 0%, #3d2e0a 100%); /* Matching leather */
+    border: 1px solid rgba(0,0,0,0.5);
+    border-radius: 4px;
+    border-top-left-radius: 12px; /* Not quite a pointer but close enough for CSS only */
+    border-bottom-left-radius: 12px;
+    display: flex;
+    align-items: center;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.2), 0 1px 1px rgba(0,0,0,0.3);
+    color: #f5f0dc;
+    font-weight: bold;
+    font-size: 12px;
+    text-shadow: 0 -1px 0 rgba(0,0,0,0.5);
+    margin-left: 5px; /* Offset for the point */
+}
+
+/* Creating the arrow point with pseudo element is better but complex. Using the shape above. */
+.notes-header__back-shape::before {
+    content: '';
+    position: absolute;
+    left: -8px;
+    top: 3px;
+    width: 22px;
+    height: 22px;
+    background: inherit;
+    border: inherit;
+    border-right: none;
+    border-top: none;
+    transform: rotate(45deg) skew(10deg, 10deg);
+    border-radius: 2px;
+    box-shadow: inset 1px 0 0 rgba(255,255,255,0.1); /* subtle highlight */
+    z-index: -1;
+    /* This is tricky to get perfect without an image, simplifying to standard rounded button if needed, but this is a good attempt */
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%); /* Clip to avoid mess */
+    display: none; /* Disabling complex shape for safety, using simple rounded + arrow */
+}
+
+.notes-header__back:active .notes-header__back-shape {
+    background: linear-gradient(180deg, #3d2e0a 0%, #5c4a10 100%);
+    box-shadow: inset 0 2px 5px rgba(0,0,0,0.4);
+}
+
+.notes-header__back-arrow {
+  font-size: 24px;
+  line-height: 1;
+  margin-right: 2px;
+  margin-top: -2px;
+  font-weight: 300;
+}
+
+.notes-header__btn-icon {
+    font-family: var(--font-notes-title);
+    font-size: 24px;
+    color: #f5f0dc;
+    text-shadow: 0 -1px 1px rgba(0,0,0,0.5);
+    opacity: 0.8;
+}
+
+/* ============================================
+   TORN PAPER EDGE
+   Realistic torn paper effect between header and body
+   ============================================ */
+.notes-tear {
+  position: relative;
+  height: 10px;
+  background: var(--notes-paper);
+  z-index: 5;
+}
+
+.notes-tear::before {
+  content: '';
+  position: absolute;
+  top: -5px;
+  left: 0;
+  right: 0;
+  height: 10px;
+  background:
+    linear-gradient(135deg, transparent 25%, var(--notes-paper) 25%),
+    linear-gradient(225deg, transparent 25%, var(--notes-paper) 25%);
+  background-size: 10px 10px;
+  filter: drop-shadow(0 -2px 2px rgba(0, 0, 0, 0.12));
+}
+
+/* ============================================
+   NOTES BODY
+   Yellow lined paper background
+   ============================================ */
+.notes-body {
+  flex: 1;
+  position: relative; /* For absolute positioning of views */
+  overflow: hidden;
+  background:
+    /* Horizontal ruled lines */
+    repeating-linear-gradient(
+      to bottom,
+      transparent 0px,
+      transparent calc(var(--notes-line-height) - 1px),
+      var(--notes-lines) calc(var(--notes-line-height) - 1px),
+      var(--notes-lines) var(--notes-line-height)
+    ),
+    /* Red margin line */
+    linear-gradient(
+      90deg,
+      transparent 0px,
+      transparent 47px,
+      var(--notes-margin-line) 47px,
+      var(--notes-margin-line) 48px,
+      transparent 48px
+    ),
+    /* Paper gradient */
+    var(--notes-paper-gradient);
+  background-attachment: scroll; /* Attach to viewport to keep lines static while content scrolls? No, local for scroll. */
+  background-attachment: local;
+}
+
+/* View Container System */
+.notes-view {
+    position: absolute;
+    inset: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 0 16px 24px 56px;
+    padding-top: 10px;
+    transition: transform 0.4s cubic-bezier(0.19, 1, 0.22, 1); /* iOS slide */
+    background: inherit; /* Share the paper background to avoid glitch */
+    /* But background-attachment: local means it scrolls.
+       If we want the background to be static while pages slide, we should put bg on notes-body.
+       But each page needs to scroll content.
+    */
+    -webkit-overflow-scrolling: touch;
+}
+
+/* Ensure background stays fixed relative to the container so lines align? */
+/* Actually, standard notes app: the paper moves? Or just text?
+   Usually the paper texture is static or moves with it.
+   Let's keep it simple: transparent background on views, background on body.
+*/
+.notes-view {
+    background: transparent;
+}
+
+/* Animation Classes */
+.notes-view--active {
+    transform: translateX(0);
+    z-index: 1;
+}
+
+.notes-view--hidden-left {
+    transform: translateX(-100%);
+    pointer-events: none;
+    display: none; /* Hide to prevent focus */
+}
+
+/* When transitioning */
+.notes-view--slide-in-right {
+    animation: slideInFromRight 0.4s cubic-bezier(0.19, 1, 0.22, 1) forwards;
+    z-index: 2;
+}
+
+.notes-view--slide-out-left {
+    animation: slideOutToLeft 0.4s cubic-bezier(0.19, 1, 0.22, 1) forwards;
+}
+
+.notes-view--slide-in-left {
+    display: block;
+    animation: slideInFromLeft 0.4s cubic-bezier(0.19, 1, 0.22, 1) forwards;
+}
+
+.notes-view--slide-out-right {
+    animation: slideOutToRight 0.4s cubic-bezier(0.19, 1, 0.22, 1) forwards;
+    z-index: 2;
+}
+
+
+/* ============================================
+   NOTES LIST VIEW
+   ============================================ */
+.notes-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.notes-list__item {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 14px 32px 14px 0;
+  background: none;
+  border: none;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  text-align: left;
+  position: relative;
+  transition: background 0.15s ease-out;
+  width: 100%;
+}
+
+.notes-list__item:hover {
+  background: rgba(0, 0, 0, 0.03);
+}
+
+.notes-list__item:active {
+  background: rgba(0, 0, 0, 0.08);
+}
+
+.notes-list__item:last-child {
+  border-bottom: none;
+}
+
+.notes-list__item-title {
+  font-family: var(--font-notes-title); /* Marker Felt */
+  font-size: 18px;
+  font-weight: bold;
+  color: #1a1a1a;
+  margin-bottom: 2px;
+  line-height: var(--notes-line-height);
+}
+
+.notes-list__item-meta {
+  display: flex;
+  gap: 8px;
+  font-size: 14px;
+  color: #666;
+  line-height: var(--notes-line-height);
+  font-family: var(--font-notes-title); /* Consistent font */
+  opacity: 0.8;
+}
+
+.notes-list__item-date {
+  font-weight: 500;
+  color: #666;
+  flex-shrink: 0;
+}
+
+.notes-list__item-preview {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: #888;
+}
+
+.notes-list__item-arrow {
+  position: absolute;
+  right: 0px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 22px;
+  color: #aaa;
+  font-weight: 300;
+}
+
+/* ============================================
+   NOTE DETAIL VIEW
+   ============================================ */
+.notes-content {
+  padding-top: 4px;
+}
+
+.notes-content__date {
+  display: block;
+  font-family: var(--font-notes-body);
+  font-size: 14px;
+  color: #777;
+  margin-bottom: 12px;
+  line-height: var(--notes-line-height);
+  text-align: center;
+}
+
+.notes-content__text {
+  font-family: var(--font-notes-body);
+  font-size: 20px; /* Slightly larger for handwriting font */
+  line-height: var(--notes-line-height);
+  color: #2c2c2c;
+}
+
+.notes-content__h2 {
+  font-family: var(--font-notes-title);
+  font-size: 24px;
+  font-weight: bold;
+  color: #1a1a1a;
+  margin: 28px 0 0;
+  padding-top: 0;
+  line-height: var(--notes-line-height);
+  text-decoration: underline;
+}
+
+.notes-content__paragraph {
+  margin: 0;
+  text-align: left;
+}
+
+.notes-content__paragraph strong {
+  font-weight: 700;
+  color: #000;
+}
+
+.notes-content__blockquote {
+  margin: 0;
+  padding: 0 16px;
+  border-left: 2px solid #8b6914;
+  color: #555;
+  font-style: italic;
+  line-height: var(--notes-line-height);
+}
+
+/* ============================================
+   SCROLLBAR STYLING
+   ============================================ */
+.notes-view::-webkit-scrollbar {
+  width: 6px;
+}
+
+.notes-view::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.notes-view::-webkit-scrollbar-thumb {
+  background: #c9c5a5;
+  border-radius: 3px;
+}
+
+.notes-view::-webkit-scrollbar-thumb:hover {
+  background: #b0a890;
+}
+
+/* ============================================
+   RESPONSIVE ADJUSTMENTS
+   ============================================ */
+@media (max-width: 400px) {
+  .notes-header__title {
+    font-size: 18px;
+    max-width: 50%;
+  }
+
+  .notes-view {
+    padding-left: 48px;
+    padding-right: 12px;
+  }
+
+  .notes-list__item-preview {
+    max-width: 140px;
+  }
+}
+
+@media (min-width: 768px) {
+  .notes-header {
+    height: 72px;
+  }
+
+  .notes-header__title {
+    font-size: 24px;
+  }
+
+  .notes-view {
+    padding-left: 64px;
+    padding-right: 24px;
+  }
+
+  .notes-content__text {
+    font-size: 22px;
+  }
+}

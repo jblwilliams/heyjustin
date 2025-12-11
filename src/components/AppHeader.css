@@ -1,0 +1,334 @@
+/* ============================================
+   AppHeader Component Styles
+   iOS 6 Glossy Navigation Bar
+   ============================================ */
+
+.app-header {
+  position: relative;
+  height: 44px;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 8px;
+  z-index: var(--z-app-header);
+
+  /* Default to blue variant */
+  background: var(--navbar-blue-gradient);
+}
+
+/* ============================================
+   TEXTURE OVERLAY
+   Subtle pattern on the header background
+   ============================================ */
+.app-header__texture {
+  position: absolute;
+  inset: 0;
+  opacity: 0.3;
+  pointer-events: none;
+}
+
+/* ============================================
+   GLOSS HIGHLIGHT
+   Top shine effect - signature iOS 6 look
+   ============================================ */
+.app-header__gloss {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 50%;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.25) 0%,
+    rgba(255, 255, 255, 0.08) 100%
+  );
+  pointer-events: none;
+}
+
+/* ============================================
+   BOTTOM BORDER
+   Shadow line at bottom of header
+   ============================================ */
+.app-header__border {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: rgba(0, 0, 0, 0.3);
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+/* ============================================
+   LAYOUT SECTIONS
+   ============================================ */
+.app-header__left,
+.app-header__right {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  min-width: 60px;
+}
+
+.app-header__left {
+  justify-content: flex-start;
+}
+
+.app-header__right {
+  justify-content: flex-end;
+}
+
+.app-header__center {
+  flex: 0 1 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  max-width: 60%;
+}
+
+/* ============================================
+   TITLE STYLING
+   ============================================ */
+.app-header__title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #fff;
+  text-shadow: 0 -1px 1px rgba(0, 0, 0, 0.4);
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.app-header__subtitle {
+  font-size: 11px;
+  font-weight: 400;
+  color: rgba(255, 255, 255, 0.8);
+  margin: 0;
+  margin-top: -2px;
+}
+
+/* ============================================
+   BACK BUTTON
+   iOS-style chevron + label button
+   ============================================ */
+.app-header__back-button {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 6px 10px 6px 4px;
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background 0.15s ease-out;
+  text-shadow: 0 -1px 1px rgba(0, 0, 0, 0.3);
+}
+
+.app-header__back-button:hover {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.app-header__back-button:active {
+  background: rgba(0, 0, 0, 0.1);
+}
+
+.app-header__back-arrow {
+  font-size: 26px;
+  line-height: 1;
+  margin-top: -2px;
+  font-weight: 300;
+}
+
+.app-header__back-label {
+  font-size: 15px;
+}
+
+/* ============================================
+   ACTION BUTTON (right side)
+   ============================================ */
+.app-header__action-button {
+  padding: 6px 12px;
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background 0.15s ease-out;
+  text-shadow: 0 -1px 1px rgba(0, 0, 0, 0.3);
+}
+
+.app-header__action-button:hover {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.app-header__action-button:active {
+  background: rgba(0, 0, 0, 0.1);
+}
+
+/* ============================================
+   VARIANT: BLUE (default)
+   Classic iOS 6 blue navigation bar
+   ============================================ */
+.app-header--blue {
+  background: var(--navbar-blue-gradient);
+  border-bottom: 1px solid var(--navbar-blue-border);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.4),
+    0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+.app-header--blue .app-header__texture {
+  background: var(--texture-brushed-metal);
+}
+
+/* ============================================
+   VARIANT: DARK
+   Dark metal for Photos app, etc.
+   ============================================ */
+.app-header--dark {
+  background: var(--navbar-dark-gradient);
+  border-bottom: 1px solid var(--navbar-dark-border);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.15),
+    0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+.app-header--dark .app-header__texture {
+  background: var(--texture-brushed-metal);
+}
+
+.app-header--dark .app-header__gloss {
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.12) 0%,
+    rgba(255, 255, 255, 0.03) 100%
+  );
+}
+
+/* ============================================
+   VARIANT: LEATHER
+   Brown leather for Notes app
+   ============================================ */
+.app-header--leather {
+  background: var(--navbar-leather-gradient);
+  border-bottom: 1px solid var(--navbar-leather-border);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.2),
+    inset 0 -2px 4px rgba(0, 0, 0, 0.2),
+    0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.app-header--leather .app-header__texture {
+  background: var(--texture-leather);
+  background-blend-mode: soft-light;
+  opacity: 0.5;
+}
+
+.app-header--leather .app-header__gloss {
+  height: 40%;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.15) 0%,
+    rgba(255, 255, 255, 0.02) 100%
+  );
+}
+
+.app-header--leather .app-header__title {
+  font-family: var(--font-notes-title);
+  font-weight: normal;
+  color: #f5f0dc;
+}
+
+.app-header--leather .app-header__back-button {
+  color: #f5f0dc;
+}
+
+/* Stitching detail for leather variant */
+.app-header--leather::after {
+  content: '';
+  position: absolute;
+  bottom: 6px;
+  left: 16px;
+  right: 16px;
+  height: 2px;
+  background: repeating-linear-gradient(
+    90deg,
+    var(--notes-stitching) 0px,
+    var(--notes-stitching) 4px,
+    transparent 4px,
+    transparent 8px
+  );
+  opacity: 0.5;
+}
+
+/* ============================================
+   VARIANT: SILVER
+   Brushed silver for Settings/Contacts
+   ============================================ */
+.app-header--silver {
+  background: var(--contacts-header-gradient);
+  border-bottom: 1px solid var(--contacts-header-border);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.5),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.1),
+    0 1px 3px rgba(0, 0, 0, 0.15);
+}
+
+.app-header--silver .app-header__texture {
+  background: var(--texture-brushed-metal);
+}
+
+.app-header--silver .app-header__gloss {
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.35) 0%,
+    rgba(255, 255, 255, 0.1) 100%
+  );
+}
+
+.app-header--silver .app-header__title {
+  color: #3a4a5a;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
+}
+
+.app-header--silver .app-header__back-button {
+  color: #2a5a98;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
+}
+
+.app-header--silver .app-header__back-button:hover {
+  background: rgba(0, 0, 0, 0.08);
+}
+
+.app-header--silver .app-header__action-button {
+  color: #2a5a98;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
+}
+
+/* ============================================
+   RESPONSIVE ADJUSTMENTS
+   ============================================ */
+@media (max-width: 400px) {
+  .app-header__back-label {
+    display: none;
+  }
+
+  .app-header__title {
+    font-size: 16px;
+  }
+}
+
+
+
+
+
+
+

@@ -1,0 +1,345 @@
+/* ============================================
+   AboutApp Styles
+   iOS 6 Contacts / Address Book Style
+   ============================================ */
+
+.about-app {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  background: var(--contacts-bg);
+  overflow: hidden;
+
+  /* Entrance animation */
+  animation: fadeIn 0.3s ease-out;
+}
+
+/* ============================================
+   HEADER
+   Stitched Leather navigation bar (Contacts style)
+   ============================================ */
+.about-header {
+  position: relative;
+  height: 44px;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* Reusing leather variables from Notes/Global */
+  background:
+    var(--texture-leather),
+    var(--notes-leather-gradient); /* Saddle brown leather */
+  background-blend-mode: soft-light, normal;
+  z-index: 10;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.5);
+}
+
+/* Stitching detail */
+.about-header::after {
+    content: '';
+    position: absolute;
+    bottom: 3px;
+    left: 10px;
+    right: 10px;
+    height: 1px;
+    border-bottom: 1px dashed rgba(45, 30, 5, 0.5);
+    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.15);
+}
+
+/* Title */
+.about-header__title {
+  position: relative;
+  font-size: 20px;
+  font-weight: bold;
+  color: #f5f0dc; /* Cream text for leather */
+  text-shadow: 0 -1px 1px rgba(0, 0, 0, 0.5);
+  margin: 0;
+  z-index: 1;
+}
+
+/* Top Gloss (optional for leather, usually less glossy than metal, but subtle highlight helps) */
+.about-header__gloss {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 50%;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.1) 0%,
+    rgba(255, 255, 255, 0.02) 100%
+  );
+  pointer-events: none;
+}
+
+/* Bottom border shadow */
+.about-header__border {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: #3d2e0a;
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+/* ============================================
+   BODY
+   Linen texture background
+   ============================================ */
+.about-body {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 16px;
+  background:
+    /* Linen texture pattern */
+    var(--texture-linen),
+    /* Base gradient */
+    linear-gradient(180deg, #e8e8e8 0%, #dcdcdc 100%);
+}
+
+/* ============================================
+   PROFILE CARD
+   Inset contact card with photo
+   ============================================ */
+.about-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+  margin-bottom: 16px;
+  background: var(--contacts-card-bg);
+  border-radius: 10px;
+
+  /* iOS 6 inset card effect */
+  box-shadow:
+    0 1px 3px rgba(0, 0, 0, 0.12),
+    0 1px 2px rgba(0, 0, 0, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9);
+  border: 1px solid var(--contacts-border);
+}
+
+/* Profile photo container */
+.about-card__photo {
+  width: 90px;
+  height: 90px;
+  border-radius: 6px; /* Slightly squared for contacts app? Or default round? Contacts usually square with small radius */
+  overflow: hidden;
+  margin-bottom: 14px;
+
+  /* Photo frame effect */
+  box-shadow:
+    0 1px 3px rgba(0, 0, 0, 0.3),
+    inset 0 0 0 1px rgba(0,0,0,0.1);
+}
+
+/* Photo placeholder with gradient */
+.about-card__photo-placeholder {
+  width: 100%;
+  height: 100%;
+  background: url('/assets/avatar-placeholder.png'), linear-gradient(135deg, #8e9eab 0%, #eef2f3 100%); /* Fallback */
+  background-size: cover;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  font-weight: 600;
+  color: #fff;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
+}
+
+/* Name and title */
+.about-card__name {
+  font-size: 22px;
+  font-weight: bold;
+  color: #000;
+  margin: 0 0 4px;
+  text-shadow: 0 1px 0 #fff;
+}
+
+.about-card__title {
+  font-size: 15px;
+  color: #666;
+  margin: 0;
+  text-shadow: 0 1px 0 #fff;
+}
+
+/* ============================================
+   CONTENT SECTIONS
+   Grouped inset sections like Settings app
+   ============================================ */
+.about-section {
+  margin-bottom: 16px;
+  background: var(--contacts-card-bg);
+  border-radius: 10px;
+  overflow: hidden;
+
+  /* Inset card effect */
+  box-shadow:
+    0 1px 3px rgba(0, 0, 0, 0.12),
+    0 1px 2px rgba(0, 0, 0, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9);
+  border: 1px solid var(--contacts-border);
+}
+
+/* Section header */
+.about-section__header {
+  padding: 8px 14px;
+  font-size: 14px;
+  font-weight: bold;
+  color: #4c566c; /* Blue-grey text */
+  text-transform: capitalize;
+  background: linear-gradient(180deg, #f4f4f4 0%, #e0e0e0 100%);
+  border-bottom: 1px solid #d0d0d0;
+  margin: 0;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.8);
+}
+
+/* Text content area */
+.about-section__content {
+  padding: 14px;
+}
+
+.about-section__content p {
+  margin: 0 0 12px;
+  font-size: 15px;
+  line-height: 1.5;
+  color: #000;
+}
+
+.about-section__content p:last-child {
+  margin-bottom: 0;
+}
+
+/* ============================================
+   LIST ITEMS
+   Rows within sections
+   ============================================ */
+.about-section__list {
+  display: flex;
+  flex-direction: column;
+}
+
+.about-list-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  border-bottom: 1px solid #e0e0e0;
+  text-decoration: none;
+  color: inherit;
+  transition: background 0.12s ease-out;
+}
+
+.about-list-item:last-child {
+  border-bottom: none;
+}
+
+.about-list-item--link:hover {
+  background: #f0f0f0;
+}
+
+.about-list-item--link:active {
+  background: #0058d0;
+  color: #fff;
+}
+.about-list-item--link:active .about-list-item__label,
+.about-list-item--link:active .about-list-item__value {
+    color: #fff;
+    text-shadow: none;
+}
+.about-list-item--link:active .about-list-item__arrow {
+    color: #fff;
+}
+
+/* Icon container */
+/* Remove colorful icons for strict Contacts app look?
+   Contacts usually had labels like "mobile", "home".
+   But "About" page needs icons to be engaging.
+   Keeping icons but making them slightly more skeuomorphic.
+*/
+.about-list-item__icon {
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  flex-shrink: 0;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.3);
+}
+
+/* Content area */
+.about-list-item__content {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  gap: 10px;
+}
+
+.about-list-item__label {
+  font-size: 14px;
+  font-weight: bold;
+  color: #4466aa; /* Field label blue */
+  width: 80px; /* Fixed width for label column */
+  flex-shrink: 0;
+  text-align: right;
+}
+
+.about-list-item__value {
+  font-size: 15px;
+  font-weight: bold;
+  color: #000;
+}
+
+/* Disclosure arrow */
+.about-list-item__arrow {
+  font-size: 20px;
+  color: #c7c7cc;
+  font-weight: bold;
+}
+
+/* ============================================
+   EXPERTISE TAGS
+   Pill-shaped skill badges
+   ============================================ */
+.about-section__tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 14px;
+}
+
+.about-tag {
+  padding: 6px 14px;
+  font-size: 14px;
+  font-weight: bold;
+  color: #4a5568;
+  background: linear-gradient(180deg, #fff 0%, #e0e0e0 100%);
+  border: 1px solid #b0b0b0;
+  border-radius: 16px;
+
+  /* Subtle 3D pill effect */
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.9),
+    0 1px 2px rgba(0, 0, 0, 0.1);
+
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.8);
+}
+
+/* ============================================
+   RESPONSIVE ADJUSTMENTS
+   ============================================ */
+@media (max-width: 400px) {
+  .about-body {
+    padding: 10px;
+  }
+
+  .about-list-item__label {
+      width: 60px;
+      font-size: 13px;
+  }
+}

@@ -1,0 +1,292 @@
+/* ============================================
+   DeviceFrame Component Styles
+   Skeuomorphic iPad/iPhone hardware frame
+   ============================================ */
+
+/* ============================================
+   DEVICE FRAME CONTAINER
+   Full viewport container with bezel border
+   ============================================ */
+.device-frame {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #000;
+  padding: 0;
+  overflow: hidden;
+}
+
+/* ============================================
+   DEVICE BEZEL
+   The physical hardware casing as full-screen border
+   ============================================ */
+.device-bezel {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  width: 100%;
+  height: 100%;
+
+  /* Black bezel with subtle gradient for depth */
+  background: linear-gradient(
+    180deg,
+    #2a2a2a 0%,
+    #1a1a1a 10%,
+    #0a0a0a 90%,
+    #000000 100%
+  );
+
+  /* Squared off for full viewport */
+  border-radius: 0;
+
+  /* Padding creates the bezel thickness around the screen */
+  /* Top and bottom have more padding for camera/home button */
+  padding: 40px 20px 70px;
+
+  /* Bezel texture/noise could be added here */
+}
+
+/* ============================================
+   SPEAKER GRILLE
+   Top speaker/earpiece
+   ============================================ */
+.device-bezel__speaker {
+  position: absolute;
+  top: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60px;
+  height: 6px;
+  background: linear-gradient(
+    180deg,
+    #1a1a1a 0%,
+    #0a0a0a 50%,
+    #1a1a1a 100%
+  );
+  border-radius: 3px;
+  box-shadow:
+    inset 0 1px 2px rgba(0, 0, 0, 0.8),
+    0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+/* ============================================
+   FRONT CAMERA
+   Camera lens indicator
+   ============================================ */
+.device-bezel__camera {
+  position: absolute;
+  top: 15px;
+  left: calc(50% + 50px);
+  width: 8px;
+  height: 8px;
+  background: radial-gradient(
+    circle,
+    #1a3a5a 0%,
+    #0a1a2a 60%,
+    #000 100%
+  );
+  border-radius: 50%;
+  box-shadow:
+    inset 0 0 2px rgba(0, 0, 0, 0.8),
+    0 0 0 1px rgba(40, 40, 40, 0.5);
+}
+
+/* ============================================
+   DEVICE SCREEN
+   The actual display area filling available bezel space
+   ============================================ */
+.device-screen {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  background: #000;
+  border-radius: 4px; /* Slight radius on screen corners inside bezel */
+  overflow: hidden;
+
+  /* Inner shadow for screen depth */
+  box-shadow:
+    inset 0 0 0 1px rgba(0, 0, 0, 0.8),
+    0 0 0 1px rgba(60, 60, 60, 0.3);
+}
+
+.device-screen__content {
+  position: absolute;
+  inset: 0;
+  top: var(--status-bar-height);
+  overflow: hidden;
+}
+
+/* ============================================
+   STATUS BAR
+   iOS-style top status bar
+   ============================================ */
+.status-bar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: var(--status-bar-height);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 8px;
+  background: var(--color-status-bar-bg);
+  color: var(--color-status-bar-text);
+  font-size: 12px;
+  font-weight: 600;
+  z-index: var(--z-status-bar);
+}
+
+.status-bar__left,
+.status-bar__right {
+  flex: 1;
+  display: flex;
+  align-items: center;
+}
+
+.status-bar__right {
+  justify-content: flex-end;
+}
+
+.status-bar__center {
+  flex: 0 0 auto;
+}
+
+.status-bar__carrier {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+}
+
+.status-bar__time {
+  font-weight: 600;
+}
+
+.status-bar__battery {
+  display: flex;
+  align-items: center;
+}
+
+/* ============================================
+   PHYSICAL HOME BUTTON
+   The iconic circular button below the screen
+   ============================================ */
+.device-home-button {
+  position: absolute;
+  bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 50px;
+  height: 50px;
+  padding: 0;
+  background: linear-gradient(
+    180deg,
+    #2a2a2a 0%,
+    #1a1a1a 40%,
+    #0a0a0a 100%
+  );
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  z-index: var(--z-home-button);
+
+  /* 3D button effect */
+  box-shadow:
+    /* Outer ring - metallic edge */
+    0 0 0 2px rgba(60, 60, 60, 0.5),
+    /* Inner shadow - recessed button */
+    inset 0 2px 4px rgba(0, 0, 0, 0.5),
+    /* Top highlight */
+    inset 0 1px 0 rgba(255, 255, 255, 0.1),
+    /* Depth shadow */
+    0 4px 8px rgba(0, 0, 0, 0.4);
+
+  transition:
+    transform 0.1s ease-out,
+    box-shadow 0.1s ease-out;
+}
+
+.device-home-button:hover {
+  box-shadow:
+    0 0 0 2px rgba(80, 80, 80, 0.6),
+    inset 0 2px 4px rgba(0, 0, 0, 0.5),
+    inset 0 1px 0 rgba(255, 255, 255, 0.15),
+    0 4px 12px rgba(0, 0, 0, 0.5);
+}
+
+.device-home-button:focus {
+  outline: none;
+  box-shadow:
+    0 0 0 2px rgba(100, 100, 100, 0.7),
+    0 0 0 4px rgba(74, 144, 217, 0.4),
+    inset 0 2px 4px rgba(0, 0, 0, 0.5),
+    inset 0 1px 0 rgba(255, 255, 255, 0.15),
+    0 4px 12px rgba(0, 0, 0, 0.5);
+}
+
+/* Pressed state */
+.device-home-button--pressed {
+  transform: translateX(-50%) scale(0.95);
+  box-shadow:
+    0 0 0 2px rgba(60, 60, 60, 0.5),
+    inset 0 3px 6px rgba(0, 0, 0, 0.7),
+    0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+/* The ring/border inside the button */
+.device-home-button__ring {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  border: 2px solid rgba(100, 100, 100, 0.3);
+}
+
+/* The iconic rounded square inside */
+.device-home-button__square {
+  width: 14px;
+  height: 14px;
+  border: 2px solid rgba(120, 120, 120, 0.6);
+  border-radius: 4px;
+  background: transparent;
+}
+
+/* ============================================
+   RESPONSIVE STYLES
+   Adjust bezel thickness based on screen size
+   ============================================ */
+
+/* Mobile - Thinner bezels */
+@media (max-width: 767px) {
+  .device-bezel {
+    padding: 30px 10px 60px;
+  }
+
+  .device-home-button {
+      bottom: 8px;
+      width: 44px;
+      height: 44px;
+  }
+
+  /* On mobile, we might want to hide speaker/camera if space is tight,
+     but let's keep them if user wants bezel always present */
+}
+
+/* Very small screens */
+@media (max-height: 600px) {
+    .device-bezel {
+        padding-top: 20px;
+        padding-bottom: 50px;
+    }
+    .device-bezel__speaker,
+    .device-bezel__camera {
+        display: none;
+    }
+}
