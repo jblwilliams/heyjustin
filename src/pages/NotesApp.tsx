@@ -12,6 +12,8 @@ function NotesApp(): React.JSX.Element {
   const [selectedNote, setSelectedNote] = useState<Note | null>(null)
   const [isTransitioning, setIsTransitioning] = useState<boolean>(false)
   const [transitionDirection, setTransitionDirection] = useState<'push' | 'pop'>('push')
+  const isPushTransition = isTransitioning && transitionDirection === 'push'
+  const isPopTransition = isTransitioning && transitionDirection === 'pop'
 
   useEffect(() => {
     if (slug) {
@@ -73,8 +75,8 @@ function NotesApp(): React.JSX.Element {
           className={`notes-view notes-list-view
             ${!isTransitioning && selectedNote ? 'notes-view--hidden-left' : ''}
             ${!isTransitioning && !selectedNote ? 'notes-view--active' : ''}
-            ${isTransitioning && !selectedNote ? 'notes-view--slide-in-left' : ''}
-            ${isTransitioning && selectedNote ? 'notes-view--slide-out-left' : ''}`}
+            ${isPopTransition ? 'notes-view--slide-in-left' : ''}
+            ${isPushTransition ? 'notes-view--slide-out-left' : ''}`}
           aria-hidden={!!selectedNote}
         >
           <div className="notes-list">

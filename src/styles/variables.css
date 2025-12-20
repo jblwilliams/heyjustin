@@ -124,13 +124,27 @@
   );
 
   /* ============================================
-     NOTES APP - Yellow Legal Pad
+     NOTES APP - Refined Legal Pad
+     Premium, readable typography with warm palette
      ============================================ */
-  --notes-paper: #fffed9;
-  --notes-paper-gradient: linear-gradient(180deg, #fffed9 0%, #fff9c4 100%);
-  --notes-lines: #c9c5a5;
-  --notes-margin-line: #ef9a9a;
-  --notes-line-height: 28px;
+
+  /* Paper: Warm aged cream instead of harsh yellow */
+  --notes-paper: #FBF7EE;
+  --notes-paper-gradient: linear-gradient(180deg, #FBF7EE 0%, #F5F0E3 100%);
+
+  /* Lines: Soft taupe-gray, subtle but visible */
+  --notes-lines: #D8D2C4;
+
+  /* Margin line: Muted terracotta, elegant */
+  --notes-margin-line: #C9A99A;
+
+  /* Line height for ruled paper */
+  --notes-line-height: 30px;
+
+  /* Text colors: Warm browns for easy reading */
+  --notes-text-primary: #3D352E;
+  --notes-text-secondary: #6B6158;
+  --notes-text-muted: #8B8178;
 
   /* Leather header */
   --notes-leather-gradient: linear-gradient(
@@ -216,9 +230,12 @@
      TYPOGRAPHY
      ============================================ */
   --font-system: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Helvetica, Arial, sans-serif;
-  --font-notes-title: "Marker Felt", "Comic Sans MS", cursive;
-  /* Updated to Marker Felt for body as per iOS 6 fidelity requirements */
-  --font-notes-body: "Marker Felt", "Comic Sans MS", cursive;
+
+  /* Notes App: Refined serif typography for readability and elegance */
+  /* Newsreader: Transitional serif with elegant proportions for titles */
+  --font-notes-title: "Newsreader", Georgia, "Times New Roman", serif;
+  /* Literata: Warm, highly readable variable font for body text */
+  --font-notes-body: "Literata", Georgia, "Times New Roman", serif;
 
   /* ============================================
      SPACING
@@ -391,19 +408,23 @@ img {
 @keyframes slideOutToLeft {
   from {
     transform: translateX(0);
+    opacity: 1;
   }
   to {
-    transform: translateX(-30%); /* iOS typically dims and slides partially */
+    transform: translateX(-100%);
+    opacity: 0;
   }
 }
 
 /* Page slide from left (for pop enter) */
 @keyframes slideInFromLeft {
   from {
-    transform: translateX(-30%);
+    transform: translateX(-100%);
+    opacity: 0;
   }
   to {
     transform: translateX(0);
+    opacity: 1;
   }
 }
 

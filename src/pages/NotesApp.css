@@ -8,7 +8,7 @@
   inset: 0;
   display: flex;
   flex-direction: column;
-  background: #fffef0;
+  background: var(--notes-paper);
   overflow: hidden;
 
   /* Entrance animation */
@@ -261,15 +261,6 @@
     -webkit-overflow-scrolling: touch;
 }
 
-/* Ensure background stays fixed relative to the container so lines align? */
-/* Actually, standard notes app: the paper moves? Or just text?
-   Usually the paper texture is static or moves with it.
-   Let's keep it simple: transparent background on views, background on body.
-*/
-.notes-view {
-    background: transparent;
-}
-
 /* Animation Classes */
 .notes-view--active {
     transform: translateX(0);
@@ -279,7 +270,8 @@
 .notes-view--hidden-left {
     transform: translateX(-100%);
     pointer-events: none;
-    display: none; /* Hide to prevent focus */
+    visibility: hidden;
+    opacity: 0;
 }
 
 /* When transitioning */
@@ -293,7 +285,7 @@
 }
 
 .notes-view--slide-in-left {
-    display: block;
+    visibility: visible;
     animation: slideInFromLeft 0.4s cubic-bezier(0.19, 1, 0.22, 1) forwards;
 }
 
@@ -339,27 +331,27 @@
 }
 
 .notes-list__item-title {
-  font-family: var(--font-notes-title); /* Marker Felt */
-  font-size: 18px;
-  font-weight: bold;
-  color: #1a1a1a;
-  margin-bottom: 2px;
-  line-height: var(--notes-line-height);
+  font-family: var(--font-notes-title);
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--notes-text-primary);
+  margin-bottom: 3px;
+  line-height: 1.3;
+  letter-spacing: -0.01em;
 }
 
 .notes-list__item-meta {
   display: flex;
-  gap: 8px;
+  gap: 10px;
   font-size: 14px;
-  color: #666;
-  line-height: var(--notes-line-height);
-  font-family: var(--font-notes-title); /* Consistent font */
-  opacity: 0.8;
+  color: var(--notes-text-secondary);
+  line-height: 1.4;
+  font-family: var(--font-notes-body);
 }
 
 .notes-list__item-date {
   font-weight: 500;
-  color: #666;
+  color: var(--notes-text-secondary);
   flex-shrink: 0;
 }
 
@@ -367,7 +359,7 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  color: #888;
+  color: var(--notes-text-muted);
 }
 
 .notes-list__item-arrow {
@@ -376,12 +368,14 @@
   top: 50%;
   transform: translateY(-50%);
   font-size: 22px;
-  color: #aaa;
+  color: var(--notes-text-muted);
   font-weight: 300;
+  opacity: 0.6;
 }
 
 /* ============================================
    NOTE DETAIL VIEW
+   Premium typography with refined reading experience
    ============================================ */
 .notes-content {
   padding-top: 4px;
@@ -390,29 +384,134 @@
 .notes-content__date {
   display: block;
   font-family: var(--font-notes-body);
-  font-size: 14px;
-  color: #777;
-  margin-bottom: 12px;
-  line-height: var(--notes-line-height);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--notes-text-muted);
+  margin-bottom: 16px;
+  line-height: 1.4;
   text-align: center;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
 }
 
 .notes-content__text {
   font-family: var(--font-notes-body);
-  font-size: 20px; /* Slightly larger for handwriting font */
+  font-size: 18px;
   line-height: var(--notes-line-height);
-  color: #2c2c2c;
+  color: var(--notes-text-primary);
+  font-weight: 400;
+  letter-spacing: 0.005em;
+
+  /* Optical sizing for Literata variable font */
+  font-optical-sizing: auto;
 }
 
+/* Markdown content styling */
+.notes-content__text h1,
+.notes-content__text h2,
+.notes-content__text h3 {
+  font-family: var(--font-notes-title);
+  font-weight: 600;
+  color: var(--notes-text-primary);
+  margin: 0 0 8px;
+  line-height: 1.25;
+  letter-spacing: -0.015em;
+}
+
+.notes-content__text h1 {
+  font-size: 26px;
+  margin-top: 32px;
+}
+
+.notes-content__text h2 {
+  font-size: 22px;
+  margin-top: 28px;
+}
+
+.notes-content__text h3 {
+  font-size: 18px;
+  margin-top: 24px;
+}
+
+.notes-content__text p {
+  margin: 0 0 var(--notes-line-height);
+}
+
+.notes-content__text p:last-child {
+  margin-bottom: 0;
+}
+
+.notes-content__text strong {
+  font-weight: 600;
+  color: var(--notes-text-primary);
+}
+
+.notes-content__text em {
+  font-style: italic;
+}
+
+.notes-content__text a {
+  color: #6B5B4F;
+  text-decoration: underline;
+  text-decoration-color: rgba(107, 91, 79, 0.4);
+  text-underline-offset: 2px;
+  transition: text-decoration-color 0.15s ease;
+}
+
+.notes-content__text a:hover {
+  text-decoration-color: rgba(107, 91, 79, 0.8);
+}
+
+.notes-content__text blockquote {
+  margin: 20px 0;
+  padding: 0 20px;
+  border-left: 3px solid var(--notes-margin-line);
+  color: var(--notes-text-secondary);
+  font-style: italic;
+}
+
+.notes-content__text ul,
+.notes-content__text ol {
+  margin: 0 0 var(--notes-line-height);
+  padding-left: 24px;
+}
+
+.notes-content__text li {
+  margin-bottom: 8px;
+}
+
+.notes-content__text code {
+  font-family: "SF Mono", Monaco, Consolas, monospace;
+  font-size: 0.9em;
+  background: rgba(0, 0, 0, 0.04);
+  padding: 2px 6px;
+  border-radius: 3px;
+  color: var(--notes-text-secondary);
+}
+
+.notes-content__text pre {
+  margin: 20px 0;
+  padding: 16px;
+  background: rgba(0, 0, 0, 0.03);
+  border-radius: 6px;
+  overflow-x: auto;
+}
+
+.notes-content__text pre code {
+  background: none;
+  padding: 0;
+}
+
+/* Legacy class support */
 .notes-content__h2 {
   font-family: var(--font-notes-title);
-  font-size: 24px;
-  font-weight: bold;
-  color: #1a1a1a;
-  margin: 28px 0 0;
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--notes-text-primary);
+  margin: 28px 0 8px;
   padding-top: 0;
-  line-height: var(--notes-line-height);
-  text-decoration: underline;
+  line-height: 1.25;
+  letter-spacing: -0.015em;
 }
 
 .notes-content__paragraph {
@@ -421,15 +520,15 @@
 }
 
 .notes-content__paragraph strong {
-  font-weight: 700;
-  color: #000;
+  font-weight: 600;
+  color: var(--notes-text-primary);
 }
 
 .notes-content__blockquote {
-  margin: 0;
-  padding: 0 16px;
-  border-left: 2px solid #8b6914;
-  color: #555;
+  margin: 20px 0;
+  padding: 0 20px;
+  border-left: 3px solid var(--notes-margin-line);
+  color: var(--notes-text-secondary);
   font-style: italic;
   line-height: var(--notes-line-height);
 }
@@ -446,12 +545,12 @@
 }
 
 .notes-view::-webkit-scrollbar-thumb {
-  background: #c9c5a5;
+  background: var(--notes-lines);
   border-radius: 3px;
 }
 
 .notes-view::-webkit-scrollbar-thumb:hover {
-  background: #b0a890;
+  background: var(--notes-text-muted);
 }
 
 /* ============================================
@@ -488,6 +587,10 @@
   }
 
   .notes-content__text {
-    font-size: 22px;
+    font-size: 19px;
+  }
+
+  .notes-list__item-title {
+    font-size: 18px;
   }
 }
