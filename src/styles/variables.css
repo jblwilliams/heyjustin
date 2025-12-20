@@ -129,7 +129,12 @@
   --notes-paper: #FBF7EE;
   --notes-paper-gradient: linear-gradient(180deg, #FBF7EE 0%, #F5F0E3 100%);
   --notes-lines: #D8D2C4;
+  --notes-lines-soft: rgba(216, 210, 196, 0.6);
   --notes-margin-line: #C9A99A;
+  --notes-baseline-offset: 8px;
+  --notes-line-nudge: 10px;
+  --notes-line-offset: calc(var(--notes-baseline-offset) + var(--notes-line-nudge));
+  --notes-line-thickness: 1px;
   --notes-line-height: 30px;
   --notes-text-primary: #3D352E;
   --notes-text-secondary: #6B6158;
