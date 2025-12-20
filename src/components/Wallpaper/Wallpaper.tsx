@@ -21,7 +21,6 @@ import {
   WebGLRenderer,
   RainyDayRenderer,
   PhysicsRenderer,
-  ImprovedPhysicsRenderer,
   BabylonRenderer
 } from './renderers';
 import type { WallpaperProps, RendererType, RendererComponent, Drop } from './types';
@@ -52,7 +51,7 @@ const renderers: Record<RendererType, RendererComponent> = {
   canvas: CanvasRenderer,
   webgl: WebGLRenderer,
   rainyday: RainyDayRenderer,
-  physics: ImprovedPhysicsRenderer,
+  physics: PhysicsRenderer,
   babylon: BabylonRenderer,
 };
 

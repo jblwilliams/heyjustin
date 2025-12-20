@@ -1,125 +1,27 @@
-import React, { useMemo, useRef } from 'react';
-import { Canvas, useFrame, useThree, extend } from '@react-three/fiber';
+import React, { useMemo } from 'react';
+import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import * as THREE from 'three';
-import { shaderMaterial, OrthographicCamera } from '@react-three/drei';
-import { PhysicsEngine } from '../PhysicsEngine';
 import type { RendererProps } from '../types';
 
-// Enhanced refraction shader with chromatic aberration and better lighting
-const RefractionMaterial = shaderMaterial(
-  {
-    tBackground: null,
-    uResolution: new THREE.Vector2(),
-    uTime: 0,
-    uIOR: 1.333, // Index of refraction for water
-  },
-  // Vertex Shader
-  `
-    varying vec2 vUv;
-    varying vec2 vScreenUv;
-    varying vec3 vWorldNormal;
-
-    void main() {
-      vUv = uv;
-
-      // Calculate screen-space UV for background sampling
-      vec4 worldPos = modelMatrix * vec4(position, 1.0);
-      vec4 mvPosition = viewMatrix * worldPos;
-      gl_Position = projectionMatrix * mvPosition;
-
-      // Convert from clip space (-1 to 1) to texture space (0 to 1)
-      vScreenUv = gl_Position.xy / gl_Position.w * 0.5 + 0.5;
-
-      // Calculate world-space normal for lighting
-      vec2 p = uv * 2.0 - 1.0;
-      float r2 = dot(p, p);
-      if (r2 <= 1.0) {
-        vWorldNormal = vec3(p.x, p.y, sqrt(1.0 - r2));
-      } else {
-        vWorldNormal = vec3(0.0, 0.0, 1.0);
-      }
-    }
-  `,
-  // Fragment Shader
-  `
-    uniform sampler2D tBackground;
-    uniform vec2 uResolution;
-    uniform float uTime;
-    uniform float uIOR;
-
-    varying vec2 vUv;
-    varying vec2 vScreenUv;
-    varying vec3 vWorldNormal;
-
-    void main() {
-      // Create circular droplet shape
-      vec2 p = vUv * 2.0 - 1.0;
-      float r2 = dot(p, p);
-
-      // Discard pixels outside the circle
-      if (r2 > 1.0) discard;
-
-      float r = sqrt(r2);
-      vec3 normal = normalize(vWorldNormal);
-
-      // Chromatic aberration - different IOR for R, G, B channels
-      float iorR = uIOR * 0.98;  // Red refracts less
-      float iorG = uIOR;          // Green is baseline
-      float iorB = uIOR * 1.02;   // Blue refracts more
-
-      float refractionStrength = 0.08;
-
-      vec2 refractionR = normal.xy * refractionStrength * iorR;
-      vec2 refractionG = normal.xy * refractionStrength * iorG;
-      vec2 refractionB = normal.xy * refractionStrength * iorB;
-
-      // Sample background with chromatic aberration
-      float red = texture2D(tBackground, vScreenUv - refractionR).r;
-      float green = texture2D(tBackground, vScreenUv - refractionG).g;
-      float blue = texture2D(tBackground, vScreenUv - refractionB).b;
-
-      vec3 refractedColor = vec3(red, green, blue);
-
-      // Lighting calculations
-      vec3 lightDir = normalize(vec3(-0.5, 0.8, 1.0));
-
-      // Specular highlight (shiny spot where light hits)
-      float specular = pow(max(dot(normal, lightDir), 0.0), 32.0);
-
-      // Fresnel effect (edges are more reflective)
-      float fresnel = pow(1.0 - normal.z, 2.5);
-
-      // Ambient occlusion (subtle shadow for depth)
-      float ao = 1.0 - (r * 0.2);
-
-      // Combine all effects
-      vec3 finalColor = refractedColor;
-      finalColor *= ao;                              // Apply occlusion
-      finalColor *= (1.0 - fresnel * 0.3);          // Darken edges slightly
-      finalColor += vec3(1.0) * specular * 0.8;     // Add specular highlight
-      finalColor += vec3(1.0) * fresnel * 0.15;     // Add edge glow
-
-      gl_FragColor = vec4(finalColor, 0.95);
-    }
-  `
-);
-
-extend({ RefractionMaterial });
-
-const BackgroundPlane: React.FC<{ texture: THREE.Texture }> = ({ texture }) => {
-  const { viewport } = useThree();
-
-  return (
-    <mesh position={[0, 0, -1]}>
-      <planeGeometry args={[viewport.width, viewport.height]} />
-      <meshBasicMaterial map={texture} />
-    </mesh>
-  );
+const parseFlag = (value: string | undefined, fallback: boolean) => {
+  if (value === undefined) return fallback;
+  const normalized = value.trim().toLowerCase();
+  if (normalized === 'true' || normalized === '1' || normalized === 'yes' || normalized === 'on') {
+    return true;
+  }
+  if (normalized === 'false' || normalized === '0' || normalized === 'no' || normalized === 'off') {
+    return false;
+  }
+  return fallback;
 };
 
-const PhysicsScene: React.FC<{ width: number; height: number }> = ({ width, height }) => {
-  const { viewport, size } = useThree();
-  const texture = useMemo(() => {
+const ENABLE_THUNDER = parseFlag(import.meta.env.VITE_WALLPAPER_THUNDER, true);
+const ENABLE_ZOOM = parseFlag(import.meta.env.VITE_WALLPAPER_ZOOM, true);
+
+const RainPlane: React.FC<{ width: number; height: number }> = ({ width, height }) => {
+  const { size, gl } = useThree();
+
+  const windowTexture = useMemo(() => {
     const canvas = document.createElement('canvas');
     canvas.width = 640;
     canvas.height = 960;
@@ -134,94 +36,206 @@ const PhysicsScene: React.FC<{ width: number; height: number }> = ({ width, heig
     ctx.fillStyle = gradient;
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    const tex = new THREE.CanvasTexture(canvas);
-    tex.wrapS = THREE.ClampToEdgeWrapping;
-    tex.wrapT = THREE.ClampToEdgeWrapping;
-    tex.minFilter = THREE.LinearFilter;
-    tex.magFilter = THREE.LinearFilter;
-    tex.colorSpace = THREE.SRGBColorSpace;
-    tex.needsUpdate = true;
-    return tex;
+    const texture = new THREE.CanvasTexture(canvas);
+    texture.wrapS = THREE.ClampToEdgeWrapping;
+    texture.wrapT = THREE.ClampToEdgeWrapping;
+    texture.minFilter = THREE.LinearFilter;
+    texture.magFilter = THREE.LinearFilter;
+    texture.colorSpace = THREE.SRGBColorSpace;
+    texture.needsUpdate = true;
+    return texture;
   }, []);
-  const instancedMeshRef = useRef<THREE.InstancedMesh>(null);
 
-  const engine = useMemo(() => {
-    return new PhysicsEngine(width, height);
-  }, [width, height]);
+  const material = useMemo(() => {
+    const shader = new THREE.ShaderMaterial({
+      uniforms: {
+        iTime: { value: 0 },
+        iResolution: { value: new THREE.Vector3(0, 0, 1) },
+        iChannel0: { value: windowTexture },
+        uEnableThunder: { value: ENABLE_THUNDER ? 1 : 0 },
+        uEnableZoom: { value: ENABLE_ZOOM ? 1 : 0 }
+      },
+      vertexShader: `
+        varying vec2 vUv;
 
-  const dummy = useMemo(() => new THREE.Object3D(), []);
+        void main() {
+          vUv = uv;
+          gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+        }
+      `,
+      fragmentShader: `
+        uniform sampler2D iChannel0;
+        uniform vec3 iResolution;
+        uniform float iTime;
+        uniform float uEnableThunder;
+        uniform float uEnableZoom;
 
-  useFrame((state, delta) => {
-    if (!instancedMeshRef.current) return;
+        varying vec2 vUv;
 
-    const dt = Math.min(delta, 0.1);
-    engine.update(dt);
+        #define S(a, b, t) smoothstep(a, b, t)
 
-    console.log('Drops:', engine.drops.length, 'First drop:', engine.drops[0]);
+        vec3 N13(float p) {
+          vec3 p3 = fract(vec3(p) * vec3(.1031,.11369,.13787));
+          p3 += dot(p3, p3.yzx + 19.19);
+          return fract(vec3((p3.x + p3.y) * p3.z, (p3.x + p3.z) * p3.y, (p3.y + p3.z) * p3.x));
+        }
 
-    const drops = engine.drops;
+        float N(float t) {
+          return fract(sin(t * 12345.564) * 7658.76);
+        }
 
-    let i = 0;
-    for (const drop of drops) {
-       if (i >= instancedMeshRef.current.count) break;
+        float Saw(float b, float t) {
+          return S(0., b, t) * S(1., b, t);
+        }
 
-       // Convert from physics coordinates (pixels) to Three.js world coordinates
-       // Physics: (0,0) is top-left, (width, height) is bottom-right
-       // Three.js: (0,0) is center, with viewport.width and viewport.height dimensions
+        vec2 DropLayer2(vec2 uv, float t) {
+          vec2 UV = uv;
 
-       const x = (drop.x / width) * viewport.width - viewport.width / 2;
-       const y = viewport.height / 2 - (drop.y / height) * viewport.height;
+          uv.y += t * 0.75;
+          vec2 a = vec2(6., 1.);
+          vec2 grid = a * 2.;
+          vec2 id = floor(uv * grid);
 
-       // Scale the drop based on its radius
-       // Multiply by 2 because the plane geometry is 1x1 and we need diameter
-       const scale = (drop.radius / width) * viewport.width * 2;
+          float colShift = N(id.x);
+          uv.y += colShift;
 
-       let scaleX = scale;
-       let scaleY = scale;
+          id = floor(uv * grid);
+          vec3 n = N13(id.x * 35.2 + id.y * 2376.1);
+          vec2 st = fract(uv * grid) - vec2(.5, 0);
 
-       // Elongate drops when they're flowing
-       if (drop.state === 'FLOWING') {
-         const velocityFactor = Math.min(drop.vy * 0.1, 1.0);
-         scaleY = scale * (1.0 + velocityFactor);
-         scaleX = scale * (1.0 - velocityFactor * 0.3);
-       }
+          float x = n.x - .5;
 
-       dummy.position.set(x, y, 0);
-       dummy.scale.set(scaleX, scaleY, 1);
-       dummy.rotation.set(0, 0, 0);
-       dummy.updateMatrix();
+          float y = UV.y * 20.;
+          float wiggle = sin(y + sin(y));
+          x += wiggle * (.5 - abs(x)) * (n.z - .5);
+          x *= .7;
+          float ti = fract(t + n.z);
+          y = (Saw(.85, ti) - .5) * .9 + .5;
+          vec2 p = vec2(x, y);
 
-       instancedMeshRef.current.setMatrixAt(i, dummy.matrix);
-       i++;
-    }
+          float d = length((st - p) * a.yx);
 
-    // Hide unused instances by scaling them to zero
-    while (i < instancedMeshRef.current.count) {
-      dummy.scale.set(0, 0, 0);
-      dummy.updateMatrix();
-      instancedMeshRef.current.setMatrixAt(i, dummy.matrix);
-      i++;
-    }
+          float mainDrop = S(.4, .0, d);
 
-    instancedMeshRef.current.instanceMatrix.needsUpdate = true;
+          float r = sqrt(S(1., y, st.y));
+          float cd = abs(st.x - x);
+          float trail = S(.23 * r, .15 * r * r, cd);
+          float trailFront = S(-.02, .02, st.y - y);
+          trail *= trailFront * r * r;
 
-    // Update shader uniforms
-    const material = instancedMeshRef.current.material as THREE.ShaderMaterial;
-    if (material.uniforms) {
-        material.uniforms.uTime.value = state.clock.elapsedTime;
-        material.uniforms.uResolution.value.set(size.width, size.height);
-    }
+          y = UV.y;
+          float trail2 = S(.2 * r, .0, cd);
+          float droplets = max(0., (sin(y * (1. - y) * 120.) - st.y)) * trail2 * trailFront * n.z;
+          y = fract(y * 10.) + (st.y - .5);
+          float dd = length(st - vec2(x, y));
+          droplets = S(.3, 0., dd);
+          float m = mainDrop + droplets * r * trailFront;
+
+          return vec2(m, trail);
+        }
+
+        float StaticDrops(vec2 uv, float t) {
+          uv *= 40.;
+
+          vec2 id = floor(uv);
+          uv = fract(uv) - .5;
+          vec3 n = N13(id.x * 107.45 + id.y * 3543.654);
+          vec2 p = (n.xy - .5) * .7;
+          float d = length(uv - p);
+
+          float fade = Saw(.025, fract(t + n.z));
+          float c = S(.3, 0., d) * fract(n.z * 10.) * fade;
+          return c;
+        }
+
+        vec2 Drops(vec2 uv, float t, float l0, float l1, float l2) {
+          float s = StaticDrops(uv, t) * l0;
+          vec2 m1 = DropLayer2(uv, t) * l1;
+          vec2 m2 = DropLayer2(uv * 1.85, t) * l2;
+
+          float c = s + m1.x + m2.x;
+          c = S(.3, 1., c);
+
+          return vec2(c, max(m1.y * l0, m2.y * l1));
+        }
+
+        vec4 texLod(sampler2D sampler, vec2 uv, float lod) {
+          #ifdef GL_EXT_shader_texture_lod
+            return texture2DLodEXT(sampler, uv, lod);
+          #else
+            return texture2D(sampler, uv);
+          #endif
+        }
+
+        void main() {
+          vec2 uv = (vUv - 0.5) * iResolution.y / iResolution.x;
+          vec2 UV = vUv;
+          float T = iTime;
+
+          float t = T * .2;
+          float rainAmount = sin(T * .05) * .3 + .7;
+
+          float maxBlur = mix(3., 6., rainAmount);
+          float minBlur = 2.;
+
+          float zoom = mix(0., -cos(T * .2), uEnableZoom);
+          uv *= .7 + zoom * .3;
+          UV = (UV - .5) * (.9 + zoom * .1) + .5;
+
+          float staticDrops = S(-.5, 1., rainAmount) * 2.;
+          float layer1 = S(.25, .75, rainAmount);
+          float layer2 = S(.0, .5, rainAmount);
+
+          vec2 c = Drops(uv, t, staticDrops, layer1, layer2);
+
+          vec2 e = vec2(.001, 0.);
+          float cx = Drops(uv + e, t, staticDrops, layer1, layer2).x;
+          float cy = Drops(uv + e.yx, t, staticDrops, layer1, layer2).x;
+          vec2 n = vec2(cx - c.x, cy - c.x);
+
+          float focus = mix(maxBlur - c.y, minBlur, S(.1, .2, c.x));
+          vec3 col = texLod(iChannel0, UV + n, focus).rgb;
+
+          float t2 = (T + 3.) * .5;
+          float colFade = sin(t2 * .2) * .5 + .5;
+          float thunderMix = colFade * uEnableThunder;
+          col *= mix(vec3(1.), vec3(.8, .9, 1.3), thunderMix);
+          float fade = S(0., 10., T);
+          float lightning = sin(t2 * sin(t2 * 10.));
+          lightning *= pow(max(0., sin(t2 + sin(t2))), 10.);
+          col *= 1. + lightning * fade * uEnableThunder;
+          col *= 1. - dot(UV - .5, UV - .5);
+          col *= fade;
+
+          gl_FragColor = vec4(col, 1.);
+        }
+      `,
+      transparent: false,
+      depthWrite: false
+    });
+
+    (shader as THREE.ShaderMaterial & { extensions: { shaderTextureLOD?: boolean } }).extensions = {
+      ...(shader.extensions || {}),
+      shaderTextureLOD: true
+    };
+
+    return shader;
+  }, [windowTexture]);
+
+  useFrame((_, delta) => {
+    material.uniforms.iTime.value += delta;
+    const dpr = gl.getPixelRatio();
+    material.uniforms.iResolution.value.set(
+      size.width * dpr,
+      size.height * dpr,
+      (size.width * dpr) / Math.max(1, size.height * dpr)
+    );
   });
 
   return (
-    <>
-      <BackgroundPlane texture={texture} />
-      <instancedMesh ref={instancedMeshRef} args={[undefined, undefined, 4000]}>
-        <planeGeometry args={[1, 1]} />
-        {/* @ts-expect-error shaderMaterial creates custom element */}
-        <refractionMaterial tBackground={texture} transparent={true} />
-      </instancedMesh>
-    </>
+    <mesh material={material} position={[0, 0, 0]}>
+      <planeGeometry args={[width, height]} />
+    </mesh>
   );
 };
 
@@ -229,29 +243,16 @@ export const PhysicsRenderer: React.FC<RendererProps> = ({ width, height, classN
   return (
     <div
       className={className}
-      style={{
-        width: '100%',
-        height: '100%',
-        position: 'absolute',
-        top: 0,
-        left: 0,
-        overflow: 'hidden'
-      }}
+      style={{ width: '100%', height: '100%', position: 'absolute', top: 0, left: 0 }}
     >
       <Canvas
+        orthographic
+        camera={{ position: [0, 0, 10], zoom: 1 }}
         dpr={[1, 2]}
-        gl={{ antialias: false, alpha: false }}
+        gl={{ antialias: true, alpha: true, powerPreference: 'high-performance' }}
+        style={{ width: '100%', height: '100%' }}
       >
-        {/*
-          CRITICAL FIX: Use proper orthographic camera bounds
-          The viewport needs to match the pixel dimensions for correct rendering
-        */}
-        <OrthographicCamera
-          makeDefault
-          position={[0, 0, 10]}
-          zoom={1}
-        />
-        <PhysicsScene width={width} height={height} />
+        <RainPlane width={width} height={height} />
       </Canvas>
     </div>
   );
