@@ -28,14 +28,14 @@ function NotesApp(): React.JSX.Element {
     setTransitionDirection('push')
     setIsTransitioning(true)
     navigate(`/notes/${note.slug}`)
-    setTimeout(() => setIsTransitioning(false), 400)
+    setTimeout(() => setIsTransitioning(false), 500)
   }
 
   const handleBack = (): void => {
     setTransitionDirection('pop')
     setIsTransitioning(true)
     navigate('/notes')
-    setTimeout(() => setIsTransitioning(false), 400)
+    setTimeout(() => setIsTransitioning(false), 500)
   }
 
   return (

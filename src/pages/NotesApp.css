@@ -128,8 +128,6 @@
     position: relative;
     height: 29px;
     padding: 0 10px 0 12px;
-    background: linear-gradient(180deg, #6d1a0c 0%, #4a0f06 100%); /* Reddish brown for Notes app back button specifically? Or just standard? Notes app usually standard black/brown or specific paper style. Let's stick to standard dark leather style button */
-    /* Actually standard iOS 6 back button is a specific shape. We can approximate with border-radius */
     background: linear-gradient(180deg, #5c4a10 0%, #3d2e0a 100%); /* Matching leather */
     border: 1px solid rgba(0,0,0,0.5);
     border-radius: 4px;
@@ -240,7 +238,6 @@
     ),
     /* Paper gradient */
     var(--notes-paper-gradient);
-  background-attachment: scroll; /* Attach to viewport to keep lines static while content scrolls? No, local for scroll. */
   background-attachment: local;
 }
 
@@ -252,12 +249,8 @@
     overflow-x: hidden;
     padding: 0 16px 24px 56px;
     padding-top: 10px;
-    transition: transform 0.4s cubic-bezier(0.19, 1, 0.22, 1); /* iOS slide */
+    transition: transform 0.5s cubic-bezier(0.19, 1, 0.22, 1); /* iOS slide */
     background: inherit; /* Share the paper background to avoid glitch */
-    /* But background-attachment: local means it scrolls.
-       If we want the background to be static while pages slide, we should put bg on notes-body.
-       But each page needs to scroll content.
-    */
     -webkit-overflow-scrolling: touch;
 }
 
@@ -276,21 +269,21 @@
 
 /* When transitioning */
 .notes-view--slide-in-right {
-    animation: slideInFromRight 0.4s cubic-bezier(0.19, 1, 0.22, 1) forwards;
+    animation: slideInFromRight 0.5s cubic-bezier(0.19, 1, 0.22, 1) forwards;
     z-index: 2;
 }
 
 .notes-view--slide-out-left {
-    animation: slideOutToLeft 0.4s cubic-bezier(0.19, 1, 0.22, 1) forwards;
+    animation: slideOutToLeft 0.5s cubic-bezier(0.19, 1, 0.22, 1) forwards;
 }
 
 .notes-view--slide-in-left {
     visibility: visible;
-    animation: slideInFromLeft 0.4s cubic-bezier(0.19, 1, 0.22, 1) forwards;
+    animation: slideInFromLeft 0.5s cubic-bezier(0.19, 1, 0.22, 1) forwards;
 }
 
 .notes-view--slide-out-right {
-    animation: slideOutToRight 0.4s cubic-bezier(0.19, 1, 0.22, 1) forwards;
+    animation: slideOutToRight 0.5s cubic-bezier(0.19, 1, 0.22, 1) forwards;
     z-index: 2;
 }
 
@@ -314,16 +307,25 @@
   cursor: pointer;
   text-align: left;
   position: relative;
-  transition: background 0.15s ease-out;
   width: 100%;
 }
 
-.notes-list__item:hover {
-  background: rgba(0, 0, 0, 0.03);
+@media (hover: hover) and (pointer: fine) {
+  .notes-list__item:hover .notes-list__item-title,
+  .notes-list__item:hover .notes-list__item-meta,
+  .notes-list__item:hover .notes-list__item-arrow {
+    opacity: 0.7;
+  }
+}
+
+.notes-list__item:active .notes-list__item-title,
+.notes-list__item:active .notes-list__item-meta,
+.notes-list__item:active .notes-list__item-arrow {
+  opacity: 0.6;
 }
 
 .notes-list__item:active {
-  background: rgba(0, 0, 0, 0.08);
+  background: none;
 }
 
 .notes-list__item:last-child {
@@ -375,7 +377,6 @@
 
 /* ============================================
    NOTE DETAIL VIEW
-   Premium typography with refined reading experience
    ============================================ */
 .notes-content {
   padding-top: 4px;
@@ -401,8 +402,6 @@
   color: var(--notes-text-primary);
   font-weight: 400;
   letter-spacing: 0.005em;
-
-  /* Optical sizing for Literata variable font */
   font-optical-sizing: auto;
 }
 
