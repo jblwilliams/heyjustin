@@ -33,16 +33,16 @@ const apps: AppConfig[] = [
     icon: 'notes',
   },
   {
-    id: 'about',
-    name: 'About',
-    path: '/about',
-    icon: 'about',
-  },
-  {
     id: 'photos',
     name: 'Photos',
     path: '/photos',
     icon: 'photos',
+  },
+  {
+    id: 'about',
+    name: 'About',
+    path: '/about',
+    icon: 'about',
   },
 ]
 
