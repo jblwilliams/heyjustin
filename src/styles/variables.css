@@ -129,13 +129,29 @@
   --notes-paper: #FBF7EE;
   --notes-paper-gradient: linear-gradient(180deg, #FBF7EE 0%, #F5F0E3 100%);
   --notes-lines: #D8D2C4;
-  --notes-lines-soft: rgba(216, 210, 196, 0.6);
+  --notes-lines-svg: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='30' height='30' viewBox='0 0 30 30' shape-rendering='crispEdges'%3E%3Crect x='0' y='29' width='30' height='1' fill='%23D8D2C4' fill-opacity='0.6'/%3E%3C/svg%3E");
   --notes-margin-line: #C9A99A;
+  --notes-margin-line-x: 47px;
+  --notes-margin-line-width: 1px;
   --notes-baseline-offset: 8px;
   --notes-line-nudge: 10px;
   --notes-line-offset: calc(var(--notes-baseline-offset) + var(--notes-line-nudge));
-  --notes-line-thickness: 1px;
   --notes-line-height: 30px;
+  --notes-paper-background:
+    var(--notes-lines-svg),
+    linear-gradient(
+      90deg,
+      transparent 0px,
+      transparent var(--notes-margin-line-x),
+      var(--notes-margin-line) var(--notes-margin-line-x),
+      var(--notes-margin-line) calc(var(--notes-margin-line-x) + var(--notes-margin-line-width)),
+      transparent calc(var(--notes-margin-line-x) + var(--notes-margin-line-width))
+    ),
+    var(--notes-paper-gradient);
+  --notes-paper-background-repeat: repeat, no-repeat, no-repeat;
+  --notes-paper-background-size: var(--notes-line-height) var(--notes-line-height), 100% 100%, 100% 100%;
+  --notes-paper-background-attachment: local, local, local;
+  --notes-paper-background-position: 0 var(--notes-line-offset), 0 0, 0 0;
   --notes-text-primary: #3D352E;
   --notes-text-secondary: #6B6158;
   --notes-text-muted: #8B8178;

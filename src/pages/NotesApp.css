@@ -230,28 +230,11 @@
     padding: 0 16px 24px 56px;
     padding-top: 10px;
     transition: transform 0.5s cubic-bezier(0.19, 1, 0.22, 1); /* iOS slide */
-    background:
-      /* Horizontal ruled lines */
-      repeating-linear-gradient(
-        to bottom,
-        transparent 0px,
-        transparent calc(var(--notes-line-height) - var(--notes-line-thickness)),
-        var(--notes-lines-soft) calc(var(--notes-line-height) - var(--notes-line-thickness)),
-        var(--notes-lines-soft) var(--notes-line-height)
-      ),
-      /* Red margin line */
-      linear-gradient(
-        90deg,
-        transparent 0px,
-        transparent 47px,
-        var(--notes-margin-line) 47px,
-        var(--notes-margin-line) 48px,
-        transparent 48px
-      ),
-      /* Paper gradient */
-      var(--notes-paper-gradient);
-    background-attachment: local;
-    background-position: 0 var(--notes-line-offset);
+    background-image: var(--notes-paper-background);
+    background-repeat: var(--notes-paper-background-repeat);
+    background-size: var(--notes-paper-background-size);
+    background-attachment: var(--notes-paper-background-attachment);
+    background-position: var(--notes-paper-background-position);
     -webkit-overflow-scrolling: touch;
 }
 
