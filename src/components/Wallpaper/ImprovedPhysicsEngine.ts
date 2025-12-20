@@ -10,11 +10,11 @@ export interface PhysicsDrop {
 }
 
 export interface PhysicsConfig {
-  spawnRate: number; // drops per second
-  criticalMass: number; // mass at which drops start sliding
-  friction: number; // velocity multiplier
-  trailDensity: number; // chance to leave a trail drop
-  k: number; // viscosity constant
+  spawnRate: number;
+  criticalMass: number;
+  friction: number;
+  trailDensity: number;
+  k: number;
   terminalVelocity: number;
 }
 
@@ -41,7 +41,6 @@ export class SpatialHashGrid {
     const col = Math.floor(drop.x / this.cellSize);
     const row = Math.floor(drop.y / this.cellSize);
 
-    // Bounds check
     if (col >= 0 && col < this.cols && row >= 0 && row < this.rows) {
       const index = row * this.cols + col;
       this.cells[index].push(drop);
@@ -73,7 +72,16 @@ export class SpatialHashGrid {
   }
 }
 
-export class PhysicsEngine {
+/**
+ * Improved Physics Engine
+ * 
+ * Key improvements:
+ * 1. Drops spawn only at the top (y = 0 to y = height * 0.1)
+ * 2. Better gravity simulation
+ * 3. Improved merging behavior
+ * 4. More realistic trail drops
+ */
+export class ImprovedPhysicsEngine {
   public drops: PhysicsDrop[] = [];
   private grid: SpatialHashGrid;
   private width: number;
@@ -87,12 +95,12 @@ export class PhysicsEngine {
     this.height = height;
 
     this.config = {
-      spawnRate: 40,
-      criticalMass: 12, // Lower threshold so more drops can flow (was 60)
-      friction: 0.9,
-      trailDensity: 0.2,
-      k: 0.5, // Viscosity constant
-      terminalVelocity: 20,
+      spawnRate: 15,
+      criticalMass: 200,
+      friction: 0.92,
+      trailDensity: 0.15,
+      k: 0.12,
+      terminalVelocity: 12,
       ...config
     };
 
@@ -106,6 +114,7 @@ export class PhysicsEngine {
   }
 
   update(dt: number) {
+    // Spawn new drops
     this.timeAccumulator += dt;
     const spawnInterval = 1 / this.config.spawnRate;
     while (this.timeAccumulator >= spawnInterval) {
@@ -113,6 +122,7 @@ export class PhysicsEngine {
       this.timeAccumulator -= spawnInterval;
     }
 
+    // Update spatial grid
     this.grid.clear();
     for (const drop of this.drops) {
       this.grid.insert(drop);
@@ -124,7 +134,9 @@ export class PhysicsEngine {
     for (const drop of this.drops) {
       if (mergedIds.has(drop.id)) continue;
 
+      // Determine if drop should flow based on critical mass
       if (drop.mass >= this.config.criticalMass) {
+        // Calculate velocity based on mass (heavier drops fall faster)
         const targetV = this.config.k * (drop.mass - this.config.criticalMass);
         drop.vy = Math.min(targetV, this.config.terminalVelocity);
         drop.state = 'FLOWING';
@@ -133,12 +145,15 @@ export class PhysicsEngine {
         drop.state = 'STATIC';
       }
 
+      // Apply velocity
       drop.y += drop.vy;
 
-      if (drop.y > this.height + drop.radius) {
+      // Remove drops that have fallen off screen
+      if (drop.y > this.height + drop.radius * 2) {
         continue;
       }
 
+      // Check for merging with nearby drops
       if (drop.state === 'FLOWING') {
         const neighbors = this.grid.getNeighbors(drop);
 
@@ -149,11 +164,13 @@ export class PhysicsEngine {
           const dy = drop.y - other.y;
           const dist = Math.sqrt(dx * dx + dy * dy);
 
-          if (dist < (drop.radius + other.radius)) {
+          // Merge if drops are overlapping
+          if (dist < (drop.radius + other.radius) * 0.9) {
             const totalMass = drop.mass + other.mass;
             const ratioDrop = drop.mass / totalMass;
             const ratioOther = other.mass / totalMass;
 
+            // Weighted average of positions
             drop.x = drop.x * ratioDrop + other.x * ratioOther;
             drop.y = drop.y * ratioDrop + other.y * ratioOther;
 
@@ -164,49 +181,54 @@ export class PhysicsEngine {
         }
       }
 
-      if (drop.state === 'FLOWING' && drop.mass > this.config.criticalMass) {
+      // Leave trail drops for flowing drops
+      if (drop.state === 'FLOWING' && drop.mass > this.config.criticalMass * 1.2) {
         drop.trailCounter += drop.vy;
-        const trailThreshold = drop.radius * 1.5;
+        const trailThreshold = drop.radius * 2;
 
         if (drop.trailCounter > trailThreshold) {
-           if (Math.random() < this.config.trailDensity) {
-             const trailMass = 2 + Math.random() * 5; // Small trail drop
-             if (drop.mass > this.config.criticalMass + trailMass) {
-                drop.mass -= trailMass;
-                drop.radius = Math.sqrt(drop.mass);
-                activeDrops.push({
-                  id: this.nextId++,
-                  x: drop.x,
-                  y: drop.y - drop.radius, // Behind the drop
-                  mass: trailMass,
-                  radius: Math.sqrt(trailMass),
-                  vy: 0,
-                  state: 'STATIC',
-                  trailCounter: 0
-                });
-             }
-           }
-           drop.trailCounter = 0;
+          if (Math.random() < this.config.trailDensity) {
+            const trailMass = 3 + Math.random() * 8;
+            if (drop.mass > this.config.criticalMass + trailMass) {
+              drop.mass -= trailMass;
+              drop.radius = Math.sqrt(drop.mass);
+              
+              // Create trail drop behind the flowing drop
+              activeDrops.push({
+                id: this.nextId++,
+                x: drop.x + (Math.random() - 0.5) * drop.radius * 0.5,
+                y: drop.y - drop.radius * 1.2,
+                mass: trailMass,
+                radius: Math.sqrt(trailMass),
+                vy: 0,
+                state: 'STATIC',
+                trailCounter: 0
+              });
+            }
+          }
+          drop.trailCounter = 0;
         }
       }
 
       activeDrops.push(drop);
     }
 
+    // Filter out merged drops
     this.drops = activeDrops.filter(d => !mergedIds.has(d.id));
   }
 
+  /**
+   * Improved spawn behavior: drops only spawn at the top of the screen
+   */
   spawnDrop() {
+    // Spawn across the full width
     const x = Math.random() * this.width;
-    const y = Math.random() * this.height;
-
-    // Mass range: 4 to 20 - many will exceed criticalMass (12) and flow
-    let mass = 4 + Math.random() * 16;
-
-    // "Runner" chance: 10% chance to spawn a larger, faster drop
-    if (Math.random() < 0.10) {
-      mass = this.config.criticalMass + 10 + Math.random() * 25;
-    }
+    
+    // Spawn only in the top 10% of the screen
+    const y = Math.random() * (this.height * 0.1);
+    
+    // Vary drop sizes
+    const mass = 3 + Math.random() * 12;
 
     this.drops.push({
       id: this.nextId++,
@@ -218,5 +240,28 @@ export class PhysicsEngine {
       state: 'STATIC',
       trailCounter: 0
     });
+  }
+
+  /**
+   * Manually add a drop (useful for testing or special effects)
+   */
+  addDrop(x: number, y: number, mass: number = 10) {
+    this.drops.push({
+      id: this.nextId++,
+      x,
+      y,
+      mass,
+      radius: Math.sqrt(mass),
+      vy: 0,
+      state: 'STATIC',
+      trailCounter: 0
+    });
+  }
+
+  /**
+   * Clear all drops
+   */
+  clear() {
+    this.drops = [];
   }
 }

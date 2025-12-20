@@ -9,12 +9,21 @@
  * VITE_WALLPAPER_RENDERER=webgl   - Three.js/WebGL
  * VITE_WALLPAPER_RENDERER=rainyday - rainyday.js library
  * VITE_WALLPAPER_RENDERER=physics - Custom Physics Engine
+ * VITE_WALLPAPER_RENDERER=babylon - Babylon.js shader renderer
  */
 
 import React, { useMemo, useRef, useEffect, useState } from 'react';
 import './Wallpaper.css';
 import { createDrops } from './raindrops';
-import { SVGRenderer, CanvasRenderer, WebGLRenderer, RainyDayRenderer, PhysicsRenderer } from './renderers';
+import {
+  SVGRenderer,
+  CanvasRenderer,
+  WebGLRenderer,
+  RainyDayRenderer,
+  PhysicsRenderer,
+  ImprovedPhysicsRenderer,
+  BabylonRenderer
+} from './renderers';
 import type { WallpaperProps, RendererType, RendererComponent, Drop } from './types';
 
 /**
@@ -22,7 +31,14 @@ import type { WallpaperProps, RendererType, RendererComponent, Drop } from './ty
  */
 const getRendererType = (): RendererType => {
   const env = import.meta.env.VITE_WALLPAPER_RENDERER as string | undefined;
-  if (env === 'canvas' || env === 'webgl' || env === 'rainyday' || env === 'svg' || env === 'physics') {
+  if (
+    env === 'canvas' ||
+    env === 'webgl' ||
+    env === 'rainyday' ||
+    env === 'svg' ||
+    env === 'physics' ||
+    env === 'babylon'
+  ) {
     return env;
   }
   return 'svg'; // Default fallback
@@ -36,7 +52,8 @@ const renderers: Record<RendererType, RendererComponent> = {
   canvas: CanvasRenderer,
   webgl: WebGLRenderer,
   rainyday: RainyDayRenderer,
-  physics: PhysicsRenderer,
+  physics: ImprovedPhysicsRenderer,
+  babylon: BabylonRenderer,
 };
 
 /**
@@ -56,6 +73,7 @@ export const Wallpaper: React.FC<WallpaperProps> = ({
 
   // Get the renderer component based on env var
   const rendererType = getRendererType();
+  console.log('🎨 Active renderer:', rendererType); // See what's active
   const Renderer = renderers[rendererType];
 
   // Generate drops (memoized for performance)

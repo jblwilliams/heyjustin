@@ -5,6 +5,8 @@
     "": {
       "name": "heyjustin-site",
       "dependencies": {
+        "@babylonjs/core": "^7.0.0",
+        "@babylonjs/materials": "^7.0.0",
         "@react-three/drei": "^10.7.7",
         "@react-three/fiber": "^9.4.2",
         "gray-matter": "^4.0.3",
@@ -71,6 +73,10 @@
     "@babel/traverse": ["@babel/traverse@7.28.5", "", { "dependencies": { "@babel/code-frame": "^7.27.1", "@babel/generator": "^7.28.5", "@babel/helper-globals": "^7.28.0", "@babel/parser": "^7.28.5", "@babel/template": "^7.27.2", "@babel/types": "^7.28.5", "debug": "^4.3.1" } }, "sha512-TCCj4t55U90khlYkVV/0TfkJkAkUg3jZFA3Neb7unZT8CPok7iiRfaX0F+WnqWqt7OxhOn0uBKXCw4lbL8W0aQ=="],
 
     "@babel/types": ["@babel/types@7.28.5", "", { "dependencies": { "@babel/helper-string-parser": "^7.27.1", "@babel/helper-validator-identifier": "^7.28.5" } }, "sha512-qQ5m48eI/MFLQ5PxQj4PFaprjyCTLI37ElWMmNs0K8Lk3dVeOdNpB3ks8jc7yM5CDmVC73eMVk/trk3fgmrUpA=="],
+
+    "@babylonjs/core": ["@babylonjs/core@7.54.3", "", {}, "sha512-P5ncXVd8GEUJLhwloP9V0oVwQYIrvZztguVeLlvd5Rx+9aQnenKjpV8auJ6SRsUlAmNZU4pFTKzwF6o2EUfhAw=="],
+
+    "@babylonjs/materials": ["@babylonjs/materials@7.54.3", "", { "peerDependencies": { "@babylonjs/core": "^7.0.0" } }, "sha512-WYqvpX6+iR0/h/X0SaoFZH2hD1nDIzu9Qo86/yEK8R+whhShgpkJ9VDdTE1yYNBxf5azFoUrxWcMy3OXNn3Z3w=="],
 
     "@dimforge/rapier3d-compat": ["@dimforge/rapier3d-compat@0.12.0", "", {}, "sha512-uekIGetywIgopfD97oDL5PfeezkFpNhwlzlaEYNOA0N6ghdsOvh/HYjSMek5Q2O1PYvRSDFcqFVJl4r4ZBwOow=="],
 

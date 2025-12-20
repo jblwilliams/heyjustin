@@ -9,3 +9,5 @@ export { CanvasRenderer } from './CanvasRenderer';
 export { WebGLRenderer } from './WebGLRenderer';
 export { RainyDayRenderer } from './RainyDayRenderer';
 export { PhysicsRenderer } from './PhysicsRenderer';
+export { ImprovedPhysicsRenderer } from './ImprovedPhysicsRenderer';
+export { BabylonRenderer } from './BabylonRenderer';
