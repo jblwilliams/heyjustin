@@ -63,7 +63,15 @@ export interface WallpaperProps {
 /**
  * Available renderer types
  */
-export type RendererType = 'svg' | 'canvas' | 'webgl' | 'rainyday' | 'physics' | 'babylon';
+export type RendererType =
+  | 'svg'
+  | 'canvas'
+  | 'webgl'
+  | 'rainyday'
+  | 'physics'
+  | 'physics-pixel'
+  | 'physics-screenspace'
+  | 'babylon';
 
 /**
  * Renderer component type

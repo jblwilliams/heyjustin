@@ -18,8 +18,7 @@ const parseFlag = (value: string | undefined, fallback: boolean) => {
 
 const ENABLE_THUNDER = parseFlag(import.meta.env.VITE_WALLPAPER_THUNDER, true);
 const ENABLE_ZOOM = parseFlag(import.meta.env.VITE_WALLPAPER_ZOOM, true);
-const DESIGN_WIDTH = 640;
-const DESIGN_HEIGHT = 960;
+const REFERENCE_HEIGHT = 960;
 
 const RainPlane: React.FC<{ width: number; height: number }> = ({ width, height }) => {
   const { size, gl } = useThree();
@@ -33,7 +32,8 @@ const RainPlane: React.FC<{ width: number; height: number }> = ({ width, height 
         iResolution: { value: new THREE.Vector3(0, 0, 1) },
         iChannel0: { value: windowTexture },
         uEnableThunder: { value: ENABLE_THUNDER ? 1 : 0 },
-        uEnableZoom: { value: ENABLE_ZOOM ? 1 : 0 }
+        uEnableZoom: { value: ENABLE_ZOOM ? 1 : 0 },
+        uReferenceHeight: { value: REFERENCE_HEIGHT }
       },
       vertexShader: `
         varying vec2 vUv;
@@ -49,6 +49,7 @@ const RainPlane: React.FC<{ width: number; height: number }> = ({ width, height 
         uniform float iTime;
         uniform float uEnableThunder;
         uniform float uEnableZoom;
+        uniform float uReferenceHeight;
 
         varying vec2 vUv;
 
@@ -148,7 +149,8 @@ const RainPlane: React.FC<{ width: number; height: number }> = ({ width, height 
         }
 
         void main() {
-          vec2 uv = (vUv - 0.5) * iResolution.y / iResolution.x;
+          vec2 frag = gl_FragCoord.xy - (iResolution.xy * 0.5);
+          vec2 uv = frag / uReferenceHeight;
           vec2 UV = vUv;
           float T = iTime;
 
@@ -205,12 +207,10 @@ const RainPlane: React.FC<{ width: number; height: number }> = ({ width, height 
   useFrame((_, delta) => {
     material.uniforms.iTime.value += delta;
     const dpr = gl.getPixelRatio();
-    const resolutionX = Math.min(size.width * dpr, DESIGN_WIDTH * dpr);
-    const resolutionY = Math.min(size.height * dpr, DESIGN_HEIGHT * dpr);
     material.uniforms.iResolution.value.set(
-      resolutionX,
-      resolutionY,
-      resolutionX / Math.max(1, resolutionY)
+      size.width * dpr,
+      size.height * dpr,
+      (size.width * dpr) / Math.max(1, size.height * dpr)
     );
   });
 
@@ -221,7 +221,7 @@ const RainPlane: React.FC<{ width: number; height: number }> = ({ width, height 
   );
 };
 
-export const PhysicsRenderer: React.FC<RendererProps> = ({ width, height, className }) => {
+export const PhysicsRendererScreenSpace: React.FC<RendererProps> = ({ width, height, className }) => {
   return (
     <div
       className={className}
@@ -240,4 +240,4 @@ export const PhysicsRenderer: React.FC<RendererProps> = ({ width, height, classN
   );
 };
 
-export default PhysicsRenderer;
+export default PhysicsRendererScreenSpace;

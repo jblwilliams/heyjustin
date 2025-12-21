@@ -8,7 +8,9 @@
  * VITE_WALLPAPER_RENDERER=canvas  - Canvas 2D
  * VITE_WALLPAPER_RENDERER=webgl   - Three.js/WebGL
  * VITE_WALLPAPER_RENDERER=rainyday - rainyday.js library
- * VITE_WALLPAPER_RENDERER=physics - Custom Physics Engine
+ * VITE_WALLPAPER_RENDERER=physics - Shader rain (clamped scale)
+ * VITE_WALLPAPER_RENDERER=physics-pixel - Shader rain (height-locked scale)
+ * VITE_WALLPAPER_RENDERER=physics-screenspace - Shader rain (screen-space scale)
  * VITE_WALLPAPER_RENDERER=babylon - Babylon.js shader renderer
  */
 
@@ -21,6 +23,8 @@ import {
   WebGLRenderer,
   RainyDayRenderer,
   PhysicsRenderer,
+  PhysicsRendererPixel,
+  PhysicsRendererScreenSpace,
   BabylonRenderer
 } from './renderers';
 import type { WallpaperProps, RendererType, RendererComponent, Drop } from './types';
@@ -36,6 +40,8 @@ const getRendererType = (): RendererType => {
     env === 'rainyday' ||
     env === 'svg' ||
     env === 'physics' ||
+    env === 'physics-pixel' ||
+    env === 'physics-screenspace' ||
     env === 'babylon'
   ) {
     return env;
@@ -52,6 +58,8 @@ const renderers: Record<RendererType, RendererComponent> = {
   webgl: WebGLRenderer,
   rainyday: RainyDayRenderer,
   physics: PhysicsRenderer,
+  'physics-pixel': PhysicsRendererPixel,
+  'physics-screenspace': PhysicsRendererScreenSpace,
   babylon: BabylonRenderer,
 };
 
