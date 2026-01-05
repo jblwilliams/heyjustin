@@ -1,7 +1,108 @@
 import './AboutApp.css'
 import profilePhoto from '../assets/images/profile.jpg'
 
+type CapabilityIconName = 'mobile' | 'web' | 'api' | 'cloud' | 'security' | 'experiments' | 'data' | 'automation'
+
+function CapabilityIcon({ name }: { name: CapabilityIconName }): React.JSX.Element {
+  switch (name) {
+    case 'mobile':
+      return (
+        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <path d="M17 1H7c-1.1 0-2 .9-2 2v18c0 1.1.9 2 2 2h10c1.1 0 2-.9 2-2V3c0-1.1-.9-2-2-2zm0 18H7V5h10v14z" />
+        </svg>
+      )
+    case 'web':
+      return (
+        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <path d="M4 5c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2H4zm0 2h16v2H4V7zm0 4h16v6H4v-6z" />
+        </svg>
+      )
+    case 'api':
+      return (
+        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <path d="M8.59 16.59 4 12l4.59-4.59L10 8.82 6.83 12 10 15.18l-1.41 1.41zM15.41 16.59 14 15.18 17.17 12 14 8.82l1.41-1.41L20 12l-4.59 4.59z" />
+        </svg>
+      )
+    case 'cloud':
+      return (
+        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <path d="M19.35 10.04C18.67 6.59 15.64 4 12 4c-2.89 0-5.4 1.64-6.65 4.04C2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96z" />
+        </svg>
+      )
+    case 'security':
+      return (
+        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <path d="M12 1 3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.88-7 9-3.72-1.12-6.47-4.88-7-9h7V6.3l7 3.11v2.58h-7V6.3l-7 3.11v2.58h7V6.3z" />
+        </svg>
+      )
+    case 'experiments':
+      return (
+        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <path d="M6 22a5 5 0 0 1-1.1-9.88L9 5.5V4H8a1 1 0 0 1 0-2h8a1 1 0 1 1 0 2h-1v1.5l4.1 6.62A5 5 0 0 1 18 22H6zm2.35-9h7.3L13 9.2V4h-2v5.2L8.35 13z" />
+        </svg>
+      )
+    case 'data':
+      return (
+        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <path d="M12 2C7.58 2 4 3.79 4 6v12c0 2.21 3.58 4 8 4s8-1.79 8-4V6c0-2.21-3.58-4-8-4zm0 2c3.87 0 6 .93 6 2s-2.13 2-6 2-6-.93-6-2 2.13-2 6-2zm0 16c-3.87 0-6-.93-6-2v-2.1c1.5 1.05 4.03 1.6 6 1.6s4.5-.55 6-1.6V18c0 1.07-2.13 2-6 2zm0-6c-3.87 0-6-.93-6-2V9.9c1.5 1.05 4.03 1.6 6 1.6s4.5-.55 6-1.6V12c0 1.07-2.13 2-6 2z" />
+        </svg>
+      )
+    case 'automation':
+      return (
+        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <path d="M19.14 12.94c.04-.31.06-.63.06-.94s-.02-.63-.06-.94l2.03-1.58a.5.5 0 0 0 .12-.64l-1.92-3.32a.5.5 0 0 0-.6-.22l-2.39.96a7.05 7.05 0 0 0-1.63-.94l-.36-2.54A.5.5 0 0 0 13.9 1h-3.8a.5.5 0 0 0-.49.42l-.36 2.54c-.58.23-1.12.54-1.63.94l-2.39-.96a.5.5 0 0 0-.6.22L2.71 7.48a.5.5 0 0 0 .12.64l2.03 1.58c-.04.31-.06.63-.06.94s.02.63.06.94L2.83 14.5a.5.5 0 0 0-.12.64l1.92 3.32c.14.24.43.34.68.22l2.39-.96c.5.4 1.05.71 1.63.94l.36 2.54c.04.24.25.42.49.42h3.8c.24 0 .45-.18.49-.42l.36-2.54c.58-.23 1.12-.54 1.63-.94l2.39.96c.25.12.54.02.68-.22l1.92-3.32a.5.5 0 0 0-.12-.64l-2.03-1.56zM12 15.5A3.5 3.5 0 1 1 12 8a3.5 3.5 0 0 1 0 7.5z" />
+        </svg>
+      )
+  }
+}
+
 function AboutApp(): React.JSX.Element {
+  const stats = [
+    { value: '50M+', label: 'Users served' },
+    { value: '100+', label: 'Countries shipped' },
+    { value: '0 → 25', label: 'Team scale' },
+    { value: '$1B+', label: 'Assets protected' },
+  ] as const
+
+  const capabilities = [
+    {
+      title: 'Mobile (iOS + Android)',
+      description: 'Native apps, shared libraries, performance & reliability.',
+      icon: 'mobile',
+      iconClassName: 'about-list-item__icon--mobile',
+    },
+    {
+      title: 'Full-stack web',
+      description: 'Modern React apps with clean, maintainable TypeScript.',
+      icon: 'web',
+      iconClassName: 'about-list-item__icon--web',
+    },
+    {
+      title: 'API design + integration',
+      description: 'Versioned APIs, auth, migrations, and partner integrations.',
+      icon: 'api',
+      iconClassName: 'about-list-item__icon--api',
+    },
+    {
+      title: 'Cloud + DevOps',
+      description: 'AWS, CI/CD, and observability that scales with the team.',
+      icon: 'cloud',
+      iconClassName: 'about-list-item__icon--cloud',
+    },
+    {
+      title: 'Data architecture',
+      description: 'Schemas, metrics, and instrumentation teams can trust.',
+      icon: 'data',
+      iconClassName: 'about-list-item__icon--data',
+    },
+    {
+      title: 'Automation + AI helpers',
+      description: 'Practical tools that speed up shipping (with guardrails).',
+      icon: 'automation',
+      iconClassName: 'about-list-item__icon--automation',
+    },
+  ] as const
+
   return (
     <div className="about-app">
       <header className="about-header">
@@ -24,7 +125,7 @@ function AboutApp(): React.JSX.Element {
           </div>
 
           <h2 className="about-card__name">Justin Williams</h2>
-          <p className="about-card__title">Engineering Leader & Builder</p>
+          <p className="about-card__title">Engineering leader • hands-on builder</p>
         </section>
 
         <div className="about-section-group about-section-group--animate" style={{ '--delay': '1' } as React.CSSProperties}>
@@ -32,26 +133,81 @@ function AboutApp(): React.JSX.Element {
           <section className="about-section">
             <div className="about-section__content">
               <p>
-                I'm an engineering leader with 15+ years of experience building software
-                at startups and large technology companies. Most recently, I was an
-                Engineering Director at Block (Cash App), where I led teams building
-                systems serving 47M+ users.
+                I build products where reliability, security, and good UX all matter.
+                I’ve spent 15+ years shipping mobile apps, backend systems, and
+                developer platforms at startups and large companies.
               </p>
               <p>
-                Now I'm co-founder of Crown Dev Studios, a Brooklyn-based software
-                company where we work hands-on with startups building custom solutions,
-                technical strategy, and system integration.
+                Most recently at Block (Cash App), I led teams working across Bitcoin
+                products, growth, and trust — from secure systems that protect
+                customer funds to experimentation and fraud prevention.
               </p>
               <p>
-                I'm passionate about mobile engineering, AI-powered applications, and
-                helping engineering teams ship great products. When I'm not coding,
-                you'll find me doing photography around NYC or traveling.
+                Now I’m co-founder of Crown Dev Studios, partnering with founders
+                and teams on architecture, integrations, and building end-to-end
+                products. I’m especially interested in practical automation and
+                AI tooling that fits into real workflows (without the hype).
               </p>
             </div>
           </section>
         </div>
 
         <div className="about-section-group about-section-group--animate" style={{ '--delay': '2' } as React.CSSProperties}>
+          <h3 className="about-section-label">At a glance</h3>
+          <section className="about-section">
+            <div className="about-section__stats">
+              {stats.map((stat) => (
+                <div key={stat.label} className="about-stat">
+                  <div className="about-stat__value">{stat.value}</div>
+                  <div className="about-stat__label">{stat.label}</div>
+                </div>
+              ))}
+            </div>
+          </section>
+        </div>
+
+        <div className="about-section-group about-section-group--animate" style={{ '--delay': '3' } as React.CSSProperties}>
+          <h3 className="about-section-label">What I build</h3>
+          <section className="about-section">
+            <div className="about-section__list">
+              {capabilities.map((capability) => (
+                <div key={capability.title} className="about-list-item">
+                  <div className={`about-list-item__icon ${capability.iconClassName}`}>
+                    <CapabilityIcon name={capability.icon} />
+                  </div>
+                  <div className="about-list-item__content">
+                    <div className="about-list-item__label">{capability.title}</div>
+                    <div className="about-list-item__value">{capability.description}</div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </section>
+        </div>
+
+        <div className="about-section-group about-section-group--animate" style={{ '--delay': '4' } as React.CSSProperties}>
+          <h3 className="about-section-label">Stack snapshot</h3>
+          <section className="about-section">
+            <div className="about-section__content">
+              <p>
+                Tools change. Fundamentals don’t. I'm a generalist that loves working across the stack:
+              </p>
+            </div>
+            <div className="about-section__tags">
+              <span className="about-tag about-tag--mobile">iOS (Swift)</span>
+              <span className="about-tag about-tag--mobile">Android (Kotlin)</span>
+              <span className="about-tag about-tag--mobile">Kotlin Multiplatform</span>
+              <span className="about-tag about-tag--mobile">React Native</span>
+              <span className="about-tag about-tag--web">React + TypeScript + Vite</span>
+              <span className="about-tag about-tag--architecture">APIs (REST / gRPC / protobufs)</span>
+              <span className="about-tag about-tag--architecture">Server: Kotlin + Go + Python + Node/Bun</span>
+              <span className="about-tag about-tag--data">Postgres + MySQL + DynamoDB</span>
+              <span className="about-tag about-tag--infra">AWS</span>
+            </div>
+          </section>
+        </div>
+
+        <div className="about-section-group about-section-group--animate" style={{ '--delay': '5' } as React.CSSProperties}>
           <h3 className="about-section-label">Experience</h3>
           <section className="about-section">
             <div className="about-section__list">
@@ -81,23 +237,7 @@ function AboutApp(): React.JSX.Element {
           </section>
         </div>
 
-        <div className="about-section-group about-section-group--animate" style={{ '--delay': '3' } as React.CSSProperties}>
-          <h3 className="about-section-label">Expertise</h3>
-          <section className="about-section">
-            <div className="about-section__tags">
-              <span className="about-tag about-tag--mobile">Mobile Development</span>
-              <span className="about-tag about-tag--mobile">iOS / Swift</span>
-              <span className="about-tag about-tag--mobile">Android / Kotlin</span>
-              <span className="about-tag about-tag--leadership">Engineering Leadership</span>
-              <span className="about-tag about-tag--architecture">System Design</span>
-              <span className="about-tag about-tag--ai">AI / ML</span>
-              <span className="about-tag about-tag--web">React</span>
-              <span className="about-tag about-tag--web">TypeScript</span>
-            </div>
-          </section>
-        </div>
-
-        <div className="about-section-group about-section-group--animate" style={{ '--delay': '4' } as React.CSSProperties}>
+        <div className="about-section-group about-section-group--animate" style={{ '--delay': '6' } as React.CSSProperties}>
           <h3 className="about-section-label">Links</h3>
           <section className="about-section">
             <div className="about-section__list">
@@ -165,9 +305,9 @@ function AboutApp(): React.JSX.Element {
           </section>
         </div>
 
-        <div className="about-section-group about-section-group--animate" style={{ '--delay': '5' } as React.CSSProperties}>
+        <div className="about-section-group about-section-group--animate" style={{ '--delay': '7' } as React.CSSProperties}>
           <a
-            href="mailto:justin@crown.dev"
+            href="mailto:hello@crown.dev"
             className="about-cta"
           >
             <svg viewBox="0 0 24 24" fill="currentColor" className="about-cta__icon" aria-hidden="true">

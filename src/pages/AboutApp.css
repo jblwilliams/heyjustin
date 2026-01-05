@@ -269,6 +269,45 @@
   margin-bottom: 0;
 }
 
+.about-section__stats {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  padding: 14px;
+}
+
+.about-stat {
+  padding: 12px 12px 10px;
+  border-radius: 10px;
+  border: 1px solid #e5e5e5;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.98) 0%,
+    rgba(245, 245, 245, 0.98) 100%
+  );
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 1),
+    0 1px 2px rgba(0, 0, 0, 0.06);
+}
+
+.about-stat__value {
+  font-size: 20px;
+  font-weight: 800;
+  color: #1a1a1a;
+  line-height: 1.1;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.8);
+  letter-spacing: -0.3px;
+}
+
+.about-stat__label {
+  margin-top: 4px;
+  font-size: 11px;
+  font-weight: 700;
+  color: #6d84a2;
+  text-transform: uppercase;
+  letter-spacing: 0.45px;
+}
+
 /* ============================================
    LIST ITEMS
    Rows within sections
@@ -366,6 +405,49 @@
   border: 1px solid #111;
 }
 
+/* Icon variants for capability list */
+.about-list-item__icon--mobile {
+  background: linear-gradient(180deg, #5ac8fa 0%, #32a3d9 100%);
+  color: #fff;
+  border: 1px solid #2890c0;
+}
+
+.about-list-item__icon--api {
+  background: linear-gradient(180deg, #af52de 0%, #8f32be 100%);
+  color: #fff;
+  border: 1px solid #7a2aa6;
+}
+
+.about-list-item__icon--security {
+  background: linear-gradient(180deg, #ff3b30 0%, #d70015 100%);
+  color: #fff;
+  border: 1px solid #b40012;
+}
+
+.about-list-item__icon--experiments {
+  background: linear-gradient(180deg, #ff9500 0%, #e88500 100%);
+  color: #fff;
+  border: 1px solid #d07500;
+}
+
+.about-list-item__icon--data {
+  background: linear-gradient(180deg, #34c759 0%, #2db24f 100%);
+  color: #fff;
+  border: 1px solid #229a42;
+}
+
+.about-list-item__icon--automation {
+  background: linear-gradient(180deg, #8e8e93 0%, #6e6e73 100%);
+  color: #fff;
+  border: 1px solid #5c5c60;
+}
+
+.about-list-item__icon--cloud {
+  background: linear-gradient(180deg, #5856d6 0%, #3b39c6 100%);
+  color: #fff;
+  border: 1px solid #2f2db0;
+}
+
 /* Content area */
 .about-list-item__content {
   flex: 1;
@@ -414,6 +496,11 @@
   flex-wrap: wrap;
   gap: 8px;
   padding: 14px;
+}
+
+/* Separator when tags follow text content */
+.about-section__content + .about-section__tags {
+  border-top: 1px solid #e5e5e5;
 }
 
 .about-tag {
@@ -476,12 +563,36 @@
   text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.15);
 }
 
-/* Category: Web (Teal) */
+/* Category: Web (Yellow) */
 .about-tag--web {
-  background: linear-gradient(180deg, #64d2ff 0%, #4ac2ef 100%);
-  color: #006080;
-  border: 1px solid #3ab2df;
-  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.3);
+  background: linear-gradient(180deg, #ffd60a 0%, #ffb700 100%);
+  color: #fff;
+  border: 1px solid #d18f00;
+  text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.18);
+}
+
+/* Category: Data (Green) */
+.about-tag--data {
+  background: linear-gradient(180deg, #34c759 0%, #2db24f 100%);
+  color: #fff;
+  border: 1px solid #229a42;
+  text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.15);
+}
+
+/* Category: Infra (Gray) */
+.about-tag--infra {
+  background: linear-gradient(180deg, #8e8e93 0%, #6e6e73 100%);
+  color: #fff;
+  border: 1px solid #5c5c60;
+  text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.15);
+}
+
+/* Category: Security (Red) */
+.about-tag--security {
+  background: linear-gradient(180deg, #ff3b30 0%, #d70015 100%);
+  color: #fff;
+  border: 1px solid #b40012;
+  text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.15);
 }
 
 /* ============================================
@@ -555,6 +666,15 @@
   .about-section__tags {
     gap: 6px;
     padding: 12px;
+  }
+
+  .about-section__stats {
+    gap: 10px;
+    padding: 12px;
+  }
+
+  .about-stat__value {
+    font-size: 18px;
   }
 
   .about-tag {
