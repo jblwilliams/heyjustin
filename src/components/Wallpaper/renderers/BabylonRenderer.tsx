@@ -14,6 +14,28 @@ import {
 import { PBRCustomMaterial } from '@babylonjs/materials/custom/pbrCustomMaterial';
 import type { RendererProps } from '../types';
 
+const parseFlag = (value: string | undefined, fallback: boolean) => {
+  if (value === undefined) return fallback;
+  const normalized = value.trim().toLowerCase();
+  if (normalized === 'true' || normalized === '1' || normalized === 'yes' || normalized === 'on') {
+    return true;
+  }
+  if (normalized === 'false' || normalized === '0' || normalized === 'no' || normalized === 'off') {
+    return false;
+  }
+  return fallback;
+};
+
+const parseNumber = (value: string | undefined, fallback: number) => {
+  if (value === undefined) return fallback;
+  const parsed = Number(value);
+  if (!Number.isFinite(parsed)) return fallback;
+  return parsed;
+};
+
+const ENABLE_THUNDER = parseFlag(import.meta.env.VITE_WALLPAPER_THUNDER, true);
+const FADE_SECONDS = parseNumber(import.meta.env.VITE_WALLPAPER_FADE_SECONDS, 10);
+
 const setupRainMaterial = (scene: Scene) => {
   const material = new PBRCustomMaterial('rainDrop', scene);
 
@@ -23,11 +45,15 @@ const setupRainMaterial = (scene: Scene) => {
   material.AddUniform('iTime', 'float', 0);
   material.AddUniform('iResolution', 'vec3', new Vector3(0, 0, 1));
   material.AddUniform('iChannel0', 'sampler2D', null);
+  material.AddUniform('uEnableThunder', 'float', ENABLE_THUNDER ? 1 : 0);
+  material.AddUniform('uFadeSeconds', 'float', Math.max(0, FADE_SECONDS));
   material.AddAttribute('uv');
 
   material.Vertex_Definitions(`
     attribute vec2 uv;
     varying vec2 vUV;
+    uniform float uEnableThunder;
+    uniform float uFadeSeconds;
   `);
 
   material.Vertex_MainEnd(`
@@ -159,11 +185,13 @@ const setupRainMaterial = (scene: Scene) => {
 
     float t2 = (T + 3.) * .5;
     float colFade = sin(t2 * .2) * .5 + .5;
-    col *= mix(vec3(1.), vec3(.8, .9, 1.3), colFade);
-    float fade = S(0., 10., T);
+    float thunderMix = colFade * uEnableThunder;
+    col *= mix(vec3(1.), vec3(.8, .9, 1.3), thunderMix);
+    float fadeSeconds = max(uFadeSeconds, 0.0);
+    float fade = fadeSeconds <= 0.0 ? 1.0 : S(0., fadeSeconds, T);
     float lightning = sin(t2 * sin(t2 * 10.));
     lightning *= pow(max(0., sin(t2 + sin(t2))), 10.);
-    col *= 1. + lightning * fade;
+    col *= 1. + lightning * fade * uEnableThunder;
     col *= 1. - dot(UV - .5, UV - .5);
     col *= fade;
 
@@ -238,6 +266,8 @@ export const BabylonRenderer: React.FC<RendererProps> = ({ className }) => {
         )
       );
       effect.setFloat('iTime', time);
+      effect.setFloat('uEnableThunder', ENABLE_THUNDER ? 1 : 0);
+      effect.setFloat('uFadeSeconds', Math.max(0, FADE_SECONDS));
       effect.setTexture('iChannel0', texture);
     });
 

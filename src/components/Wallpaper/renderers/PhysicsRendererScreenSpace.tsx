@@ -16,8 +16,16 @@ const parseFlag = (value: string | undefined, fallback: boolean) => {
   return fallback;
 };
 
+const parseNumber = (value: string | undefined, fallback: number) => {
+  if (value === undefined) return fallback;
+  const parsed = Number(value);
+  if (!Number.isFinite(parsed)) return fallback;
+  return parsed;
+};
+
 const ENABLE_THUNDER = parseFlag(import.meta.env.VITE_WALLPAPER_THUNDER, true);
 const ENABLE_ZOOM = parseFlag(import.meta.env.VITE_WALLPAPER_ZOOM, true);
+const FADE_SECONDS = parseNumber(import.meta.env.VITE_WALLPAPER_FADE_SECONDS, 10);
 const REFERENCE_HEIGHT = 960;
 
 const RainPlane: React.FC<{ width: number; height: number }> = ({ width, height }) => {
@@ -33,6 +41,7 @@ const RainPlane: React.FC<{ width: number; height: number }> = ({ width, height 
         iChannel0: { value: windowTexture },
         uEnableThunder: { value: ENABLE_THUNDER ? 1 : 0 },
         uEnableZoom: { value: ENABLE_ZOOM ? 1 : 0 },
+        uFadeSeconds: { value: Math.max(0, FADE_SECONDS) },
         uReferenceHeight: { value: REFERENCE_HEIGHT }
       },
       vertexShader: `
@@ -49,6 +58,7 @@ const RainPlane: React.FC<{ width: number; height: number }> = ({ width, height 
         uniform float iTime;
         uniform float uEnableThunder;
         uniform float uEnableZoom;
+        uniform float uFadeSeconds;
         uniform float uReferenceHeight;
 
         varying vec2 vUv;
@@ -182,7 +192,8 @@ const RainPlane: React.FC<{ width: number; height: number }> = ({ width, height 
           float colFade = sin(t2 * .2) * .5 + .5;
           float thunderMix = colFade * uEnableThunder;
           col *= mix(vec3(1.), vec3(.8, .9, 1.3), thunderMix);
-          float fade = S(0., 10., T);
+          float fadeSeconds = max(uFadeSeconds, 0.0);
+          float fade = fadeSeconds <= 0.0 ? 1.0 : S(0., fadeSeconds, T);
           float lightning = sin(t2 * sin(t2 * 10.));
           lightning *= pow(max(0., sin(t2 + sin(t2))), 10.);
           col *= 1. + lightning * fade * uEnableThunder;

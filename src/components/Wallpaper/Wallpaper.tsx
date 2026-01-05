@@ -12,6 +12,10 @@
  * VITE_WALLPAPER_RENDERER=physics-pixel - Shader rain (height-locked scale)
  * VITE_WALLPAPER_RENDERER=physics-screenspace - Shader rain (screen-space scale)
  * VITE_WALLPAPER_RENDERER=babylon - Babylon.js shader renderer
+ *
+ * VITE_WALLPAPER_THUNDER=true/false - Enable lightning/thunder in shader renderers
+ * VITE_WALLPAPER_FADE_SECONDS=10 - Fade-in duration (0 disables)
+ * VITE_WALLPAPER_ZOOM=true/false - Enable subtle zoom drift in shader renderers
  */
 
 import React, { useMemo, useRef, useEffect, useState } from 'react';
