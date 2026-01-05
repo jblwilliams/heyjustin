@@ -1,8 +1,42 @@
+import albumsConfig from '@/data/albums.config.json'
+import albumsGenerated from '@/data/albums.generated.json'
+
+interface AlbumConfig {
+  id: string
+  title: string
+  coverPhotos: string[]
+  directory: string
+}
+
+interface GeneratedPhotoEntry {
+  base: string
+  sizes: {
+    thumb: { file: string; width: number; height: number }
+    medium: { file: string; width: number; height: number }
+    large: { file: string; width: number; height: number }
+  }
+}
+
+interface AlbumsGenerated {
+  albums: Record<string, GeneratedPhotoEntry[]>
+}
+
 export interface Photo {
   id: number
   src: string
   alt: string
-  placeholder: string
+  width: number
+  height: number
+  dimensions: {
+    thumb: { width: number; height: number }
+    medium: { width: number; height: number }
+    large: { width: number; height: number }
+  }
+  sources: {
+    thumb: string
+    medium: string
+    large: string
+  }
 }
 
 export interface Album {
@@ -13,21 +47,6 @@ export interface Album {
   photos: Photo[]
 }
 
-interface PhotoSeed {
-  file: string
-  alt?: string
-  placeholder?: string
-}
-
-interface AlbumSeed {
-  id: string
-  title: string
-  coverPhotos: string[]
-  directory: string
-  sort?: 'filename' | 'manual'
-  photos: PhotoSeed[]
-}
-
 const placeholderPalette = [
   'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
   'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
@@ -36,104 +55,56 @@ const placeholderPalette = [
   'linear-gradient(135deg, #fa709a 0%, #fee140 100%)',
 ]
 
-const filenameSort = (a: PhotoSeed, b: PhotoSeed) =>
-  a.file.localeCompare(b.file, undefined, { numeric: true, sensitivity: 'base' })
+const filenameSort = (a: string, b: string) =>
+  a.localeCompare(b, undefined, { numeric: true, sensitivity: 'base' })
 
-const buildAlbum = (seed: AlbumSeed): Album => {
-  const orderedPhotos =
-    seed.sort === 'manual' ? seed.photos : [...seed.photos].sort(filenameSort)
+const buildAlbum = (config: AlbumConfig, generated: AlbumsGenerated): Album => {
+  const files = generated.albums[config.id] ?? []
+  const orderedFiles = [...files].sort((a, b) => filenameSort(a.base, b.base))
 
-  const photos = orderedPhotos.map((photo, index) => ({
+  const photos = orderedFiles.map((file, index) => ({
     id: index + 1,
-    src: `${seed.directory}/${photo.file}`,
-    alt: photo.alt ?? `${seed.title} photo ${index + 1}`,
-    placeholder: photo.placeholder ?? placeholderPalette[index % placeholderPalette.length],
+    src: `${config.directory}/${file.sizes.large.file}`,
+    alt: '',
+    width: file.sizes.thumb.width,
+    height: file.sizes.thumb.height,
+    dimensions: {
+      thumb: {
+        width: file.sizes.thumb.width,
+        height: file.sizes.thumb.height,
+      },
+      medium: {
+        width: file.sizes.medium.width,
+        height: file.sizes.medium.height,
+      },
+      large: {
+        width: file.sizes.large.width,
+        height: file.sizes.large.height,
+      },
+    },
+    sources: {
+      thumb: `${config.directory}/${file.sizes.thumb.file}`,
+      medium: `${config.directory}/${file.sizes.medium.file}`,
+      large: `${config.directory}/${file.sizes.large.file}`,
+    },
   }))
 
+  const coverFiles = photos.slice(-3)
+  const coverPhotos = coverFiles.map(photo => `url("${photo.sources.thumb}")`)
+  while (coverPhotos.length < 3) {
+    const fallback =
+      config.coverPhotos[coverPhotos.length] ??
+      placeholderPalette[coverPhotos.length % placeholderPalette.length]
+    coverPhotos.push(fallback)
+  }
+
   return {
-    id: seed.id,
-    title: seed.title,
-    coverPhotos: seed.coverPhotos,
+    id: config.id,
+    title: config.title,
+    coverPhotos,
     count: photos.length,
     photos,
   }
 }
 
-const albumSeeds: AlbumSeed[] = [
-  {
-    id: 'camera-roll',
-    title: 'Camera Roll',
-    directory: '/images/albums/camera-roll',
-    coverPhotos: [
-      'linear-gradient(135deg, #2b5876 0%, #4e4376 100%)',
-      'linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%)',
-      'linear-gradient(135deg, #30cfd0 0%, #330867 100%)',
-    ],
-    sort: 'filename',
-    photos: [
-      { file: '001-snow-day.jpg' },
-      { file: '002-city-night.jpg' },
-      { file: '003-surf-at-dusk.jpg' },
-    ],
-  },
-  {
-    id: 'travel',
-    title: 'Travel',
-    directory: '/images/albums/travel',
-    coverPhotos: [
-      'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-      'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
-      'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)',
-    ],
-    sort: 'filename',
-    photos: [
-      { file: '001-travel.jpg' },
-      { file: '002-travel.jpg' },
-      { file: '003-travel.jpg' },
-      { file: '004-travel.jpg' },
-      { file: '005-travel.jpg' },
-    ],
-  },
-  {
-    id: 'nature',
-    title: 'Nature',
-    directory: '/images/albums/nature',
-    coverPhotos: [
-      'linear-gradient(135deg, #fa709a 0%, #fee140 100%)',
-      'linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)',
-      'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-    ],
-    sort: 'filename',
-    photos: [
-      { file: '001-nature.jpg' },
-      { file: '002-nature.jpg' },
-    ],
-  },
-  {
-    id: 'portraits',
-    title: 'Portraits',
-    directory: '/images/albums/portraits',
-    coverPhotos: [
-      'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)',
-      'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-      'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
-    ],
-    sort: 'filename',
-    photos: [
-      { file: '001-portraits.jpg' },
-      { file: '002-portraits.jpg' },
-      { file: '003-portraits.jpg' },
-      { file: '004-portraits.jpg' },
-      { file: '005-portraits.jpg' },
-      { file: '006-portraits.jpg' },
-      { file: '007-portraits.jpg' },
-      { file: '008-portraits.jpg' },
-      { file: '009-portraits.jpg' },
-      { file: '010-portraits.jpg' },
-      { file: '011-portraits.jpg' },
-      { file: '012-portraits.jpg' },
-    ],
-  },
-]
-
-export const albums = albumSeeds.map(buildAlbum)
+export const albums = albumsConfig.albums.map(config => buildAlbum(config, albumsGenerated))

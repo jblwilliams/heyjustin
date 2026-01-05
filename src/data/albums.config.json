@@ -1,0 +1,44 @@
+{
+  "albums": [
+    {
+      "id": "camera-roll",
+      "title": "Camera Roll",
+      "directory": "/images/albums/camera-roll",
+      "coverPhotos": [
+        "linear-gradient(135deg, #2b5876 0%, #4e4376 100%)",
+        "linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%)",
+        "linear-gradient(135deg, #30cfd0 0%, #330867 100%)"
+      ]
+    },
+    {
+      "id": "travel",
+      "title": "Travel",
+      "directory": "/images/albums/travel",
+      "coverPhotos": [
+        "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+        "linear-gradient(135deg, #f093fb 0%, #f5576c 100%)",
+        "linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)"
+      ]
+    },
+    {
+      "id": "nature",
+      "title": "Nature",
+      "directory": "/images/albums/nature",
+      "coverPhotos": [
+        "linear-gradient(135deg, #fa709a 0%, #fee140 100%)",
+        "linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)",
+        "linear-gradient(135deg, #667eea 0%, #764ba2 100%)"
+      ]
+    },
+    {
+      "id": "portraits",
+      "title": "Portraits",
+      "directory": "/images/albums/portraits",
+      "coverPhotos": [
+        "linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)",
+        "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+        "linear-gradient(135deg, #f093fb 0%, #f5576c 100%)"
+      ]
+    }
+  ]
+}

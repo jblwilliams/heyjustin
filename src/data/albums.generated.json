@@ -1,0 +1,352 @@
+{
+  "albums": {
+    "camera-roll": [
+      {
+        "base": "001-camera-roll",
+        "sizes": {
+          "thumb": {
+            "file": "001-camera-roll@600.jpg",
+            "width": 600,
+            "height": 450
+          },
+          "medium": {
+            "file": "001-camera-roll@1600.jpg",
+            "width": 1600,
+            "height": 1200
+          },
+          "large": {
+            "file": "001-camera-roll@2600.jpg",
+            "width": 2600,
+            "height": 1950
+          }
+        }
+      },
+      {
+        "base": "002-camera-roll",
+        "sizes": {
+          "thumb": {
+            "file": "002-camera-roll@600.jpg",
+            "width": 600,
+            "height": 400
+          },
+          "medium": {
+            "file": "002-camera-roll@1600.jpg",
+            "width": 1600,
+            "height": 1067
+          },
+          "large": {
+            "file": "002-camera-roll@2600.jpg",
+            "width": 2600,
+            "height": 1733
+          }
+        }
+      },
+      {
+        "base": "003-camera-roll",
+        "sizes": {
+          "thumb": {
+            "file": "003-camera-roll@600.jpg",
+            "width": 400,
+            "height": 600
+          },
+          "medium": {
+            "file": "003-camera-roll@1600.jpg",
+            "width": 1067,
+            "height": 1600
+          },
+          "large": {
+            "file": "003-camera-roll@2600.jpg",
+            "width": 1733,
+            "height": 2600
+          }
+        }
+      },
+      {
+        "base": "004-camera-roll",
+        "sizes": {
+          "thumb": {
+            "file": "004-camera-roll@600.jpg",
+            "width": 400,
+            "height": 600
+          },
+          "medium": {
+            "file": "004-camera-roll@1600.jpg",
+            "width": 1067,
+            "height": 1600
+          },
+          "large": {
+            "file": "004-camera-roll@2600.jpg",
+            "width": 1733,
+            "height": 2600
+          }
+        }
+      }
+    ],
+    "travel": [
+      {
+        "base": "001-travel",
+        "sizes": {
+          "thumb": {
+            "file": "001-travel@600.jpg",
+            "width": 600,
+            "height": 400
+          },
+          "medium": {
+            "file": "001-travel@1600.jpg",
+            "width": 1600,
+            "height": 1067
+          },
+          "large": {
+            "file": "001-travel@2600.jpg",
+            "width": 2600,
+            "height": 1733
+          }
+        }
+      },
+      {
+        "base": "002-travel",
+        "sizes": {
+          "thumb": {
+            "file": "002-travel@600.jpg",
+            "width": 600,
+            "height": 400
+          },
+          "medium": {
+            "file": "002-travel@1600.jpg",
+            "width": 1600,
+            "height": 1067
+          },
+          "large": {
+            "file": "002-travel@2600.jpg",
+            "width": 2600,
+            "height": 1733
+          }
+        }
+      },
+      {
+        "base": "003-travel",
+        "sizes": {
+          "thumb": {
+            "file": "003-travel@600.jpg",
+            "width": 400,
+            "height": 600
+          },
+          "medium": {
+            "file": "003-travel@1600.jpg",
+            "width": 1067,
+            "height": 1600
+          },
+          "large": {
+            "file": "003-travel@2600.jpg",
+            "width": 1733,
+            "height": 2600
+          }
+        }
+      },
+      {
+        "base": "004-travel",
+        "sizes": {
+          "thumb": {
+            "file": "004-travel@600.jpg",
+            "width": 400,
+            "height": 600
+          },
+          "medium": {
+            "file": "004-travel@1600.jpg",
+            "width": 1067,
+            "height": 1600
+          },
+          "large": {
+            "file": "004-travel@2600.jpg",
+            "width": 1733,
+            "height": 2600
+          }
+        }
+      }
+    ],
+    "nature": [
+      {
+        "base": "001-nature",
+        "sizes": {
+          "thumb": {
+            "file": "001-nature@600.jpg",
+            "width": 600,
+            "height": 400
+          },
+          "medium": {
+            "file": "001-nature@1600.jpg",
+            "width": 1600,
+            "height": 1067
+          },
+          "large": {
+            "file": "001-nature@2600.jpg",
+            "width": 2600,
+            "height": 1733
+          }
+        }
+      },
+      {
+        "base": "002-nature",
+        "sizes": {
+          "thumb": {
+            "file": "002-nature@600.jpg",
+            "width": 600,
+            "height": 400
+          },
+          "medium": {
+            "file": "002-nature@1600.jpg",
+            "width": 1600,
+            "height": 1067
+          },
+          "large": {
+            "file": "002-nature@2600.jpg",
+            "width": 2600,
+            "height": 1733
+          }
+        }
+      },
+      {
+        "base": "003-nature",
+        "sizes": {
+          "thumb": {
+            "file": "003-nature@600.jpg",
+            "width": 400,
+            "height": 600
+          },
+          "medium": {
+            "file": "003-nature@1600.jpg",
+            "width": 1067,
+            "height": 1600
+          },
+          "large": {
+            "file": "003-nature@2600.jpg",
+            "width": 1733,
+            "height": 2600
+          }
+        }
+      },
+      {
+        "base": "004-nature",
+        "sizes": {
+          "thumb": {
+            "file": "004-nature@600.jpg",
+            "width": 600,
+            "height": 400
+          },
+          "medium": {
+            "file": "004-nature@1600.jpg",
+            "width": 1600,
+            "height": 1067
+          },
+          "large": {
+            "file": "004-nature@2600.jpg",
+            "width": 2600,
+            "height": 1733
+          }
+        }
+      }
+    ],
+    "portraits": [
+      {
+        "base": "001-portraits",
+        "sizes": {
+          "thumb": {
+            "file": "001-portraits@600.jpg",
+            "width": 600,
+            "height": 400
+          },
+          "medium": {
+            "file": "001-portraits@1600.jpg",
+            "width": 1600,
+            "height": 1067
+          },
+          "large": {
+            "file": "001-portraits@2600.jpg",
+            "width": 2600,
+            "height": 1733
+          }
+        }
+      },
+      {
+        "base": "002-portraits",
+        "sizes": {
+          "thumb": {
+            "file": "002-portraits@600.jpg",
+            "width": 600,
+            "height": 400
+          },
+          "medium": {
+            "file": "002-portraits@1600.jpg",
+            "width": 1600,
+            "height": 1067
+          },
+          "large": {
+            "file": "002-portraits@2600.jpg",
+            "width": 2600,
+            "height": 1733
+          }
+        }
+      },
+      {
+        "base": "003-portraits",
+        "sizes": {
+          "thumb": {
+            "file": "003-portraits@600.jpg",
+            "width": 400,
+            "height": 600
+          },
+          "medium": {
+            "file": "003-portraits@1600.jpg",
+            "width": 1067,
+            "height": 1600
+          },
+          "large": {
+            "file": "003-portraits@2600.jpg",
+            "width": 1733,
+            "height": 2600
+          }
+        }
+      },
+      {
+        "base": "004-portraits",
+        "sizes": {
+          "thumb": {
+            "file": "004-portraits@600.jpg",
+            "width": 600,
+            "height": 400
+          },
+          "medium": {
+            "file": "004-portraits@1600.jpg",
+            "width": 1600,
+            "height": 1067
+          },
+          "large": {
+            "file": "004-portraits@2600.jpg",
+            "width": 2600,
+            "height": 1733
+          }
+        }
+      },
+      {
+        "base": "005-portraits",
+        "sizes": {
+          "thumb": {
+            "file": "005-portraits@600.jpg",
+            "width": 362,
+            "height": 600
+          },
+          "medium": {
+            "file": "005-portraits@1600.jpg",
+            "width": 965,
+            "height": 1600
+          },
+          "large": {
+            "file": "005-portraits@2600.jpg",
+            "width": 1568,
+            "height": 2600
+          }
+        }
+      }
+    ]
+  }
+}

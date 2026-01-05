@@ -216,31 +216,57 @@
 }
 
 /* ============================================
-   PHOTO GRID
-   4-column grid of photo thumbnails
+   JUSTIFIED PHOTO GRID
    ============================================ */
-.photos-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 4px;
-  padding: 4px;
-  align-content: start;
+.photos-justified {
+  display: flex;
+  flex-direction: column;
+  padding: 16px;
+  align-content: flex-start;
+  background: #0b0b0b;
+  --photos-gap: 12px;
 }
 
-.photos-grid__item {
-  position: relative;
-  aspect-ratio: 1;
-  cursor: pointer;
+.photos-justified__row {
+  display: flex;
+  column-gap: var(--photos-gap);
+  align-items: center;
+  margin-bottom: var(--photos-gap);
+}
+
+.photos-justified__row:last-child {
+  margin-bottom: 0;
+}
+
+.photos-justified__item {
+  display: block;
   border: none;
   padding: 0;
-  background: #2a2a2a;
-  overflow: hidden;
+  background: transparent;
+  cursor: pointer;
+  transition: transform 0.15s ease;
 }
 
-.photos-grid__image {
+.photos-justified__item:hover {
+  transform: translateY(-1px);
+}
+
+.photos-justified__frame {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.photos-justified__image {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: contain;
+  background: transparent;
+  box-shadow: 0 0 0 3px #fff;
 }
 
 /* ============================================
