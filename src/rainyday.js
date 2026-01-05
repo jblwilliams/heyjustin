@@ -323,9 +323,9 @@ RainyDay.prototype.rain = function(presets, speed) {
     }
   }
 
-  for (var i = 0; i < presets.length; i++) {
-    if (!presets[i][3]) {
-      presets[i][3] = -1
+  for (var j = 0; j < presets.length; j++) {
+    if (!presets[j][3]) {
+      presets[j][3] = -1
     }
   }
 
