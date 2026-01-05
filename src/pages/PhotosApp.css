@@ -245,26 +245,18 @@
   background: transparent;
   cursor: pointer;
   transition: transform 0.15s ease;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.45);
 }
 
 .photos-justified__item:hover {
   transform: translateY(-1px);
 }
 
-.photos-justified__frame {
-  width: 100%;
-  height: 100%;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.45);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
 .photos-justified__image {
   width: 100%;
   height: 100%;
   display: block;
-  object-fit: contain;
+  object-fit: cover;
   background: transparent;
   box-shadow: 0 0 0 3px #fff;
 }

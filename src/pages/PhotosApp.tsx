@@ -190,15 +190,13 @@ function PhotosApp(): React.JSX.Element {
                         animationDelay: `${itemIndex * 40}ms`,
                       }}
                     >
-                      <div className="photos-justified__frame">
-                        <img
-                          className="photos-justified__image"
-                          src={item.photo.sources[gridSizeKey]}
-                          alt={item.photo.alt}
-                          loading="lazy"
-                          decoding="async"
-                        />
-                      </div>
+                      <img
+                        className="photos-justified__image"
+                        src={item.photo.sources[gridSizeKey]}
+                        alt={item.photo.alt}
+                        loading="lazy"
+                        decoding="async"
+                      />
                     </button>
                   ))}
                 </div>
