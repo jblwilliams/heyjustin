@@ -10,14 +10,11 @@
   flex-direction: column;
   background: var(--contacts-bg);
   overflow: hidden;
-
-  /* Entrance animation */
-  animation: fadeIn 0.3s ease-out;
 }
 
 /* ============================================
    HEADER
-   Stitched Leather navigation bar (Contacts style)
+   Stitched Leather navigation bar with torn edge
    ============================================ */
 .about-header {
   position: relative;
@@ -26,25 +23,31 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  /* Reusing leather variables from Notes/Global */
   background:
     var(--texture-leather),
-    var(--notes-leather-gradient); /* Saddle brown leather */
+    var(--notes-leather-gradient);
   background-blend-mode: soft-light, normal;
   z-index: 10;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.5);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.4);
 }
 
 /* Stitching detail */
 .about-header::after {
-    content: '';
-    position: absolute;
-    bottom: 3px;
-    left: 10px;
-    right: 10px;
-    height: 1px;
-    border-bottom: 1px dashed rgba(45, 30, 5, 0.5);
-    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.15);
+  content: '';
+  position: absolute;
+  bottom: 4px;
+  left: 12px;
+  right: 12px;
+  height: 0;
+  border-bottom: 1px dashed rgba(45, 30, 5, 0.6);
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.12);
+  background-image: repeating-linear-gradient(
+    90deg,
+    transparent,
+    transparent 4px,
+    rgba(45, 30, 5, 0.4) 4px,
+    rgba(45, 30, 5, 0.4) 8px
+  );
 }
 
 /* Title */
@@ -52,13 +55,14 @@
   position: relative;
   font-size: 20px;
   font-weight: bold;
-  color: #f5f0dc; /* Cream text for leather */
-  text-shadow: 0 -1px 1px rgba(0, 0, 0, 0.5);
+  color: #f5f0dc;
+  text-shadow: 0 -1px 1px rgba(0, 0, 0, 0.6);
   margin: 0;
   z-index: 1;
+  letter-spacing: 0.5px;
 }
 
-/* Top Gloss (optional for leather, usually less glossy than metal, but subtle highlight helps) */
+/* Top Gloss */
 .about-header__gloss {
   position: absolute;
   top: 0;
@@ -67,7 +71,7 @@
   height: 50%;
   background: linear-gradient(
     180deg,
-    rgba(255, 255, 255, 0.1) 0%,
+    rgba(255, 255, 255, 0.12) 0%,
     rgba(255, 255, 255, 0.02) 100%
   );
   pointer-events: none;
@@ -81,7 +85,23 @@
   right: 0;
   height: 1px;
   background: #3d2e0a;
-  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.1);
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+/* Torn paper edge effect */
+.about-header__torn-edge {
+  position: absolute;
+  bottom: -8px;
+  left: 0;
+  right: 0;
+  height: 8px;
+  background: linear-gradient(180deg, rgba(0,0,0,0.15) 0%, transparent 100%);
+  mask-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 100 8' xmlns='http://www.w3.org/2000/svg' preserveAspectRatio='none'%3E%3Cpath d='M0,0 L2,3 L5,1 L8,4 L12,2 L15,5 L18,2 L22,4 L25,1 L28,3 L32,2 L35,4 L38,1 L42,3 L45,2 L48,5 L52,2 L55,4 L58,1 L62,3 L65,2 L68,4 L72,1 L75,3 L78,2 L82,5 L85,2 L88,4 L92,1 L95,3 L98,2 L100,4 L100,0 Z' fill='black'/%3E%3C/svg%3E");
+  -webkit-mask-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 100 8' xmlns='http://www.w3.org/2000/svg' preserveAspectRatio='none'%3E%3Cpath d='M0,0 L2,3 L5,1 L8,4 L12,2 L15,5 L18,2 L22,4 L25,1 L28,3 L32,2 L35,4 L38,1 L42,3 L45,2 L48,5 L52,2 L55,4 L58,1 L62,3 L65,2 L68,4 L72,1 L75,3 L78,2 L82,5 L85,2 L88,4 L92,1 L95,3 L98,2 L100,4 L100,0 Z' fill='black'/%3E%3C/svg%3E");
+  mask-size: 100% 100%;
+  -webkit-mask-size: 100% 100%;
+  pointer-events: none;
+  z-index: 5;
 }
 
 /* ============================================
@@ -92,12 +112,31 @@
   flex: 1;
   overflow-y: auto;
   overflow-x: hidden;
-  padding: 16px;
+  padding: 20px 16px;
   background:
-    /* Linen texture pattern */
     var(--texture-linen),
-    /* Base gradient */
     linear-gradient(180deg, #e8e8e8 0%, #dcdcdc 100%);
+}
+
+/* ============================================
+   STAGGERED ENTRANCE ANIMATIONS
+   ============================================ */
+@keyframes slideUpFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.about-card--animate,
+.about-section-group--animate {
+  opacity: 0;
+  animation: slideUpFadeIn 0.4s ease-out forwards;
+  animation-delay: calc(var(--delay, 0) * 0.08s);
 }
 
 /* ============================================
@@ -108,105 +147,122 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 20px;
-  margin-bottom: 16px;
+  padding: 24px 20px;
+  margin-bottom: 20px;
   background: var(--contacts-card-bg);
-  border-radius: 10px;
+  border-radius: 12px;
 
   /* iOS 6 inset card effect */
   box-shadow:
-    0 1px 3px rgba(0, 0, 0, 0.12),
+    0 2px 8px rgba(0, 0, 0, 0.1),
     0 1px 2px rgba(0, 0, 0, 0.08),
-    inset 0 1px 0 rgba(255, 255, 255, 0.9);
+    inset 0 1px 0 rgba(255, 255, 255, 1);
   border: 1px solid var(--contacts-border);
 }
 
 /* Profile photo container */
 .about-card__photo {
-  width: 90px;
-  height: 90px;
-  border-radius: 6px; /* Slightly squared for contacts app? Or default round? Contacts usually square with small radius */
+  position: relative;
+  width: 100px;
+  height: 100px;
+  border-radius: 8px;
   overflow: hidden;
-  margin-bottom: 14px;
+  margin-bottom: 16px;
 
-  /* Photo frame effect */
+  /* Leather-bound photo frame effect */
   box-shadow:
-    0 1px 3px rgba(0, 0, 0, 0.3),
-    inset 0 0 0 1px rgba(0,0,0,0.1);
+    0 3px 8px rgba(0, 0, 0, 0.25),
+    0 1px 3px rgba(0, 0, 0, 0.15),
+    inset 0 0 0 3px rgba(139, 90, 43, 0.4),
+    inset 0 0 0 4px rgba(255, 255, 255, 0.1);
+  border: 2px solid #5a3d1e;
 }
 
-/* Photo placeholder with gradient */
-.about-card__photo-placeholder {
+/* Real photo image */
+.about-card__photo-image {
   width: 100%;
   height: 100%;
-  background: url('/assets/avatar-placeholder.png'), linear-gradient(135deg, #8e9eab 0%, #eef2f3 100%); /* Fallback */
-  background-size: cover;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 28px;
-  font-weight: 600;
-  color: #fff;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
+  object-fit: cover;
+  display: block;
+}
+
+/* Glossy overlay on photo */
+.about-card__photo-gloss {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.25) 0%,
+    rgba(255, 255, 255, 0.05) 40%,
+    transparent 60%
+  );
+  pointer-events: none;
 }
 
 /* Name and title */
 .about-card__name {
-  font-size: 22px;
+  font-size: 24px;
   font-weight: bold;
-  color: #000;
-  margin: 0 0 4px;
-  text-shadow: 0 1px 0 #fff;
+  color: #1a1a1a;
+  margin: 0 0 6px;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.8);
+  letter-spacing: -0.3px;
 }
 
 .about-card__title {
   font-size: 15px;
   color: #666;
   margin: 0;
-  text-shadow: 0 1px 0 #fff;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.8);
+  font-weight: 500;
+}
+
+/* ============================================
+   SECTION GROUPS
+   iOS 6 Settings-style with label above card
+   ============================================ */
+.about-section-group {
+  margin-bottom: 20px;
+}
+
+/* Section label - above the card */
+.about-section-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #6d84a2;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin: 0 0 6px 12px;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.9);
 }
 
 /* ============================================
    CONTENT SECTIONS
-   Grouped inset sections like Settings app
+   Clean inset cards without internal header
    ============================================ */
 .about-section {
-  margin-bottom: 16px;
   background: var(--contacts-card-bg);
   border-radius: 10px;
   overflow: hidden;
 
   /* Inset card effect */
   box-shadow:
-    0 1px 3px rgba(0, 0, 0, 0.12),
-    0 1px 2px rgba(0, 0, 0, 0.08),
-    inset 0 1px 0 rgba(255, 255, 255, 0.9);
+    0 1px 4px rgba(0, 0, 0, 0.1),
+    0 1px 2px rgba(0, 0, 0, 0.06),
+    inset 0 1px 0 rgba(255, 255, 255, 1);
   border: 1px solid var(--contacts-border);
-}
-
-/* Section header */
-.about-section__header {
-  padding: 8px 14px;
-  font-size: 14px;
-  font-weight: bold;
-  color: #4c566c; /* Blue-grey text */
-  text-transform: capitalize;
-  background: linear-gradient(180deg, #f4f4f4 0%, #e0e0e0 100%);
-  border-bottom: 1px solid #d0d0d0;
-  margin: 0;
-  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.8);
 }
 
 /* Text content area */
 .about-section__content {
-  padding: 14px;
+  padding: 14px 16px;
 }
 
 .about-section__content p {
   margin: 0 0 12px;
   font-size: 15px;
-  line-height: 1.5;
-  color: #000;
+  line-height: 1.55;
+  color: #1a1a1a;
 }
 
 .about-section__content p:last-child {
@@ -227,10 +283,10 @@
   align-items: center;
   gap: 12px;
   padding: 12px 14px;
-  border-bottom: 1px solid #e0e0e0;
+  border-bottom: 1px solid #e5e5e5;
   text-decoration: none;
   color: inherit;
-  transition: background 0.12s ease-out;
+  transition: background 0.15s ease-out;
 }
 
 .about-list-item:last-child {
@@ -238,38 +294,76 @@
 }
 
 .about-list-item--link:hover {
-  background: #f0f0f0;
+  background: rgba(0, 0, 0, 0.03);
 }
 
 .about-list-item--link:active {
-  background: #0058d0;
-  color: #fff;
+  background: #007aff;
 }
+
 .about-list-item--link:active .about-list-item__label,
 .about-list-item--link:active .about-list-item__value {
-    color: #fff;
-    text-shadow: none;
+  color: #fff;
+  text-shadow: none;
 }
+
 .about-list-item--link:active .about-list-item__arrow {
-    color: #fff;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.about-list-item--link:active .about-list-item__icon {
+  filter: brightness(1.2);
 }
 
 /* Icon container */
-/* Remove colorful icons for strict Contacts app look?
-   Contacts usually had labels like "mobile", "home".
-   But "About" page needs icons to be engaging.
-   Keeping icons but making them slightly more skeuomorphic.
-*/
 .about-list-item__icon {
-  width: 28px;
-  height: 28px;
-  border-radius: 6px;
+  width: 32px;
+  height: 32px;
+  border-radius: 7px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 14px;
   flex-shrink: 0;
-  box-shadow: 0 1px 2px rgba(0,0,0,0.3);
+  box-shadow:
+    0 1px 3px rgba(0, 0, 0, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  transition: filter 0.15s ease-out;
+}
+
+.about-list-item__icon svg {
+  width: 18px;
+  height: 18px;
+}
+
+/* Icon color variants */
+.about-list-item__icon--crown {
+  background: linear-gradient(180deg, #f5c842 0%, #d4a012 100%);
+  color: #fff;
+  border: 1px solid #b8890a;
+}
+
+.about-list-item__icon--block {
+  background: linear-gradient(180deg, #00d54b 0%, #00a83a 100%);
+  color: #fff;
+  border: 1px solid #008a30;
+}
+
+.about-list-item__icon--web {
+  background: linear-gradient(180deg, #5ac8fa 0%, #32a3d9 100%);
+  color: #fff;
+  border: 1px solid #2890c0;
+}
+
+.about-list-item__icon--linkedin {
+  background: linear-gradient(180deg, #0a78b5 0%, #005f94 100%);
+  color: #fff;
+  border: 1px solid #004d78;
+}
+
+.about-list-item__icon--github {
+  background: linear-gradient(180deg, #444 0%, #222 100%);
+  color: #fff;
+  border: 1px solid #111;
 }
 
 /* Content area */
@@ -277,34 +371,43 @@
   flex: 1;
   min-width: 0;
   display: flex;
-  gap: 10px;
+  flex-direction: column;
+  gap: 2px;
 }
 
 .about-list-item__label {
-  font-size: 14px;
-  font-weight: bold;
-  color: #4466aa; /* Field label blue */
-  width: 80px; /* Fixed width for label column */
-  flex-shrink: 0;
-  text-align: right;
+  font-size: 16px;
+  font-weight: 600;
+  color: #1a1a1a;
 }
 
 .about-list-item__value {
-  font-size: 15px;
-  font-weight: bold;
-  color: #000;
+  font-size: 14px;
+  color: #666;
+}
+
+/* Single value (no label) styling */
+.about-list-item__content:has(.about-list-item__value:only-child) .about-list-item__value {
+  font-size: 16px;
+  font-weight: 500;
+  color: #1a1a1a;
 }
 
 /* Disclosure arrow */
 .about-list-item__arrow {
-  font-size: 20px;
   color: #c7c7cc;
-  font-weight: bold;
+  display: flex;
+  align-items: center;
+}
+
+.about-list-item__arrow svg {
+  width: 20px;
+  height: 20px;
 }
 
 /* ============================================
    EXPERTISE TAGS
-   Pill-shaped skill badges
+   Category-colored pill badges with hover
    ============================================ */
 .about-section__tags {
   display: flex;
@@ -314,20 +417,118 @@
 }
 
 .about-tag {
-  padding: 6px 14px;
-  font-size: 14px;
-  font-weight: bold;
-  color: #4a5568;
-  background: linear-gradient(180deg, #fff 0%, #e0e0e0 100%);
-  border: 1px solid #b0b0b0;
+  padding: 7px 14px;
+  font-size: 13px;
+  font-weight: 600;
   border-radius: 16px;
+  cursor: default;
+  transition: all 0.15s ease-out;
 
-  /* Subtle 3D pill effect */
+  /* Base 3D pill effect */
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.9),
+    inset 0 1px 0 rgba(255, 255, 255, 0.7),
     0 1px 2px rgba(0, 0, 0, 0.1);
+}
 
-  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.8);
+.about-tag:hover {
+  transform: translateY(-1px);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.7),
+    0 2px 4px rgba(0, 0, 0, 0.15);
+}
+
+.about-tag:active {
+  transform: translateY(0);
+  box-shadow:
+    inset 0 1px 2px rgba(0, 0, 0, 0.1),
+    0 1px 1px rgba(0, 0, 0, 0.05);
+}
+
+/* Category: Mobile (Blue) */
+.about-tag--mobile {
+  background: linear-gradient(180deg, #5ac8fa 0%, #48b8ea 100%);
+  color: #fff;
+  border: 1px solid #32a3d9;
+  text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.15);
+}
+
+/* Category: Leadership (Green) */
+.about-tag--leadership {
+  background: linear-gradient(180deg, #4cd964 0%, #3cc454 100%);
+  color: #fff;
+  border: 1px solid #2eb344;
+  text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.15);
+}
+
+/* Category: Architecture (Purple) */
+.about-tag--architecture {
+  background: linear-gradient(180deg, #af52de 0%, #9f42ce 100%);
+  color: #fff;
+  border: 1px solid #8f32be;
+  text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.15);
+}
+
+/* Category: AI (Orange) */
+.about-tag--ai {
+  background: linear-gradient(180deg, #ff9500 0%, #e88500 100%);
+  color: #fff;
+  border: 1px solid #d07500;
+  text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.15);
+}
+
+/* Category: Web (Teal) */
+.about-tag--web {
+  background: linear-gradient(180deg, #64d2ff 0%, #4ac2ef 100%);
+  color: #006080;
+  border: 1px solid #3ab2df;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+/* ============================================
+   CONTACT CTA BUTTON
+   iOS 6 blue button style
+   ============================================ */
+.about-cta {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 14px 24px;
+  margin: 0 auto;
+  max-width: 280px;
+
+  font-size: 17px;
+  font-weight: 600;
+  color: #fff;
+  text-decoration: none;
+  text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
+
+  background: linear-gradient(180deg, #4ca7ff 0%, #1e7bd9 50%, #0062c4 51%, #0070e0 100%);
+  border: 1px solid #0055b0;
+  border-radius: 10px;
+
+  box-shadow:
+    0 2px 4px rgba(0, 0, 0, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+
+  transition: all 0.12s ease-out;
+}
+
+.about-cta:hover {
+  background: linear-gradient(180deg, #5cb7ff 0%, #2e8be9 50%, #1072d4 51%, #1080f0 100%);
+}
+
+.about-cta:active {
+  background: linear-gradient(180deg, #0062c4 0%, #0055b0 50%, #004a9a 51%, #0055b0 100%);
+  box-shadow:
+    inset 0 2px 4px rgba(0, 0, 0, 0.3),
+    0 1px 0 rgba(255, 255, 255, 0.1);
+  transform: translateY(1px);
+}
+
+.about-cta__icon {
+  width: 20px;
+  height: 20px;
 }
 
 /* ============================================
@@ -335,11 +536,33 @@
    ============================================ */
 @media (max-width: 400px) {
   .about-body {
-    padding: 10px;
+    padding: 16px 12px;
   }
 
-  .about-list-item__label {
-      width: 60px;
-      font-size: 13px;
+  .about-card {
+    padding: 20px 16px;
+  }
+
+  .about-card__photo {
+    width: 88px;
+    height: 88px;
+  }
+
+  .about-card__name {
+    font-size: 22px;
+  }
+
+  .about-section__tags {
+    gap: 6px;
+    padding: 12px;
+  }
+
+  .about-tag {
+    padding: 6px 12px;
+    font-size: 12px;
+  }
+
+  .about-cta {
+    max-width: 100%;
   }
 }
