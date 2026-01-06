@@ -106,18 +106,42 @@ function PhotosApp(): React.JSX.Element {
     return toBodySpace(rect)
   }
 
-  const calculateLayoutPositions = (): LayoutItemWithPosition[] => {
-    if (!gridRef.current || !bodyRef.current || !selectedAlbum) return []
+  const measureGridLayout = () => {
+    if (!gridRef.current || !bodyRef.current) return null
 
-    const items: LayoutItemWithPosition[] = []
     const bodyRect = bodyRef.current.getBoundingClientRect()
+    const containerRect = gridRef.current.getBoundingClientRect()
     const styles = getComputedStyle(gridRef.current)
     const paddingLeft = parseFloat(styles.paddingLeft)
+    const paddingRight = parseFloat(styles.paddingRight)
     const paddingTop = parseFloat(styles.paddingTop)
-    const containerRect = gridRef.current.getBoundingClientRect()
+    const innerWidth = Math.max(0, gridRef.current.clientWidth - paddingLeft - paddingRight)
+
+    if (innerWidth <= 0) return null
+
+    return {
+      bodyRect,
+      containerRect,
+      paddingLeft,
+      paddingTop,
+      innerWidth,
+      dpr: window.devicePixelRatio,
+    }
+  }
+
+  const calculateLayoutPositions = (album: Album) => {
+    const metrics = measureGridLayout()
+    if (!metrics) return null
+
+    const { bodyRect, containerRect, paddingLeft, paddingTop, innerWidth, dpr } = metrics
+    const sizeKey: GridSizeKey = dpr > 1.4 ? 'medium' : 'thumb'
+    const columns = innerWidth <= 640 ? 2 : innerWidth <= 1024 ? 3 : 4
+    const computedRows = buildFixedRows(album.photos, sizeKey, innerWidth, columns, rowGap)
+
+    const items: LayoutItemWithPosition[] = []
     let currentY = containerRect.top - bodyRect.top + paddingTop
 
-    rows.forEach((row, rowIndex) => {
+    computedRows.forEach((row, rowIndex) => {
       let currentX = containerRect.left - bodyRect.left + paddingLeft
 
       row.items.forEach(item => {
@@ -133,10 +157,10 @@ function PhotosApp(): React.JSX.Element {
         currentX += item.width + rowGap
       })
 
-      currentY += row.height + (rowIndex < rows.length - 1 ? rowGap : 0)
+      currentY += row.height + (rowIndex < computedRows.length - 1 ? rowGap : 0)
     })
 
-    return items
+    return { positions: items, innerWidth, dpr }
   }
 
   const openAlbum = (album: Album, event: React.MouseEvent<HTMLButtonElement>) => {
@@ -163,26 +187,35 @@ function PhotosApp(): React.JSX.Element {
     lastStackOriginRef.current = origin
     setSelectedAlbum(album)
 
-    requestAnimationFrame(() => {
-      requestAnimationFrame(() => {
-        const positions = calculateLayoutPositions()
-        if (positions.length === 0) {
-          return
+    const startAnimation = (attempt = 0) => {
+      const result = calculateLayoutPositions(album)
+      if (!result || result.positions.length === 0) {
+        if (attempt < 5) {
+          requestAnimationFrame(() => startAnimation(attempt + 1))
+        } else {
+          setCurrentView('grid')
         }
+        return
+      }
 
-        setAnimationLayout(positions)
-        setAnimationOrigin(origin)
-        setAnimationDirection('open')
-        setCurrentView('grid')
-        setIsAnimating(true)
-      })
+      setGridWidth(result.innerWidth)
+      setGridDpr(result.dpr)
+      setAnimationLayout(result.positions)
+      setAnimationOrigin(origin)
+      setAnimationDirection('open')
+      setCurrentView('grid')
+      setIsAnimating(true)
+    }
+
+    requestAnimationFrame(() => {
+      startAnimation()
     })
   }
 
   const closeAlbum = () => {
     if (!selectedAlbum || isAnimating) return
 
-    const positions = calculateLayoutPositions()
+    const layout = calculateLayoutPositions(selectedAlbum)
     const origin = findAlbumOrigin(selectedAlbum.id) ?? lastStackOriginRef.current
     if (!origin) {
       setCurrentView('albums')
@@ -190,14 +223,19 @@ function PhotosApp(): React.JSX.Element {
       return
     }
 
-    setAnimationLayout(positions)
+    if (!layout || layout.positions.length === 0) {
+      setCurrentView('albums')
+      setSelectedAlbum(null)
+      return
+    }
+
+    setGridWidth(layout.innerWidth)
+    setGridDpr(layout.dpr)
+    setAnimationLayout(layout.positions)
     setAnimationOrigin(origin)
     setAnimationDirection('close')
     setCurrentView('albums')
-
-    requestAnimationFrame(() => {
-      setIsAnimating(true)
-    })
+    setIsAnimating(true)
   }
 
   const openPhoto = (photo: Photo) => setSelectedPhoto(photo)

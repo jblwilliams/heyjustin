@@ -1,10 +1,8 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import type { Photo } from '@/data/albums'
 import './UnfurlAnimation.css'
 
 const flyDuration = 580
-const fadeDuration = 160
-const opacityDuration = 420
 const stagger = 24
 const maxStagger = 220
 
@@ -33,9 +31,12 @@ export function UnfurlAnimation({
   targetAlbumId,
   onComplete,
 }: UnfurlAnimationProps) {
-  const [phase, setPhase] = useState<'start' | 'fly' | 'complete'>('start')
+  const [phase, setPhase] = useState<'start' | 'fly'>('start')
+  const completionRef = useRef<HTMLDivElement | null>(null)
+  const didCompleteRef = useRef(false)
 
   const maxDelay = Math.min((gridLayout.length - 1) * stagger, maxStagger)
+  const completionIndex = direction === 'close' ? 0 : gridLayout.length - 1
 
   useEffect(() => {
     if (direction === 'close' && targetAlbumId) {
@@ -49,34 +50,69 @@ export function UnfurlAnimation({
   }, [direction, targetAlbumId])
 
   useEffect(() => {
-    const totalFly = flyDuration + maxDelay
-
+    didCompleteRef.current = false
+    setPhase('start')
     const startTimer = requestAnimationFrame(() => {
       setPhase('fly')
     })
 
-    const completeTimer = setTimeout(() => {
-      setPhase('complete')
-    }, totalFly)
-
-    const cleanupTimer = setTimeout(() => {
-      onComplete()
-    }, totalFly + fadeDuration)
-
     return () => {
       cancelAnimationFrame(startTimer)
-      clearTimeout(completeTimer)
-      clearTimeout(cleanupTimer)
     }
-  }, [gridLayout.length, onComplete, maxDelay])
+  }, [direction, gridLayout.length])
+
+  useEffect(() => {
+    if (phase !== 'fly') return
+
+    const node = completionRef.current
+    if (!node) return
+
+    const finish = () => {
+      if (didCompleteRef.current) return
+      didCompleteRef.current = true
+      onComplete()
+    }
+
+    const handleTransitionEnd = (event: TransitionEvent) => {
+      if (event.target !== node) return
+      if (event.propertyName !== 'transform') return
+      finish()
+    }
+
+    const handleTransitionCancel = (event: TransitionEvent) => {
+      if (event.target !== node) return
+      if (event.propertyName !== 'transform') return
+      finish()
+    }
+
+    node.addEventListener('transitionend', handleTransitionEnd)
+    node.addEventListener('transitioncancel', handleTransitionCancel)
+
+    const computed = window.getComputedStyle(node)
+    const duration = parseFloat(computed.transitionDuration)
+    const delay = parseFloat(computed.transitionDelay)
+    const needsImmediateFinish = (Number.isNaN(duration) || duration === 0) && (Number.isNaN(delay) || delay === 0)
+
+    if (needsImmediateFinish) {
+      const immediate = requestAnimationFrame(() => finish())
+      return () => {
+        cancelAnimationFrame(immediate)
+        node.removeEventListener('transitionend', handleTransitionEnd)
+        node.removeEventListener('transitioncancel', handleTransitionCancel)
+      }
+    }
+
+    return () => {
+      node.removeEventListener('transitionend', handleTransitionEnd)
+      node.removeEventListener('transitioncancel', handleTransitionCancel)
+    }
+  }, [onComplete, phase])
 
   return (
     <div
       className={`unfurl-animation unfurl-animation--${phase}`}
       style={{
         '--fly-duration': `${flyDuration}ms`,
-        '--fade-duration': `${fadeDuration}ms`,
-        '--opacity-duration': `${opacityDuration}ms`,
       } as React.CSSProperties}
     >
       {gridLayout.map((item, index) => {
@@ -106,6 +142,7 @@ export function UnfurlAnimation({
           <div
             key={item.photo.id}
             className="unfurl-animation__photo"
+            ref={index === completionIndex ? completionRef : undefined}
             style={{
               '--start-x': `${startX}px`,
               '--start-y': `${startY}px`,
