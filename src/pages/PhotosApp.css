@@ -127,12 +127,12 @@
     inset: 0;
     overflow-y: auto;
     background: #000;
-    transition: transform 0.35s cubic-bezier(0.33, 1, 0.68, 1);
+    transition: opacity 0.2s ease;
 }
 
-.photos-view--active { transform: translateX(0); z-index: 1; }
-.photos-view--hidden { transform: translateX(100%); z-index: 2; pointer-events: none; }
-.photos-view--background { transform: translateX(-25%); z-index: 0; opacity: 0.5; }
+.photos-view--active { opacity: 1; z-index: 1; }
+.photos-view--hidden { opacity: 0; z-index: 2; pointer-events: none; }
+.photos-view--background { opacity: 0; z-index: 0; pointer-events: none; }
 
 /* ============================================
    ALBUMS VIEW
