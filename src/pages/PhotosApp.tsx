@@ -111,9 +111,9 @@ function PhotosApp(): React.JSX.Element {
 
     const items: LayoutItemWithPosition[] = []
     const bodyRect = bodyRef.current.getBoundingClientRect()
-    const styles = window.getComputedStyle(gridRef.current)
-    const paddingLeft = Number.parseFloat(styles.paddingLeft || '0')
-    const paddingTop = Number.parseFloat(styles.paddingTop || '0')
+    const styles = getComputedStyle(gridRef.current)
+    const paddingLeft = parseFloat(styles.paddingLeft)
+    const paddingTop = parseFloat(styles.paddingTop)
     const containerRect = gridRef.current.getBoundingClientRect()
     let currentY = containerRect.top - bodyRect.top + paddingTop
 
@@ -161,7 +161,6 @@ function PhotosApp(): React.JSX.Element {
     }
 
     lastStackOriginRef.current = origin
-
     setSelectedAlbum(album)
 
     requestAnimationFrame(() => {
@@ -185,7 +184,7 @@ function PhotosApp(): React.JSX.Element {
 
     const positions = calculateLayoutPositions()
     const origin = findAlbumOrigin(selectedAlbum.id) ?? lastStackOriginRef.current
-    if (!origin || positions.length === 0) {
+    if (!origin) {
       setCurrentView('albums')
       setSelectedAlbum(null)
       return
@@ -194,7 +193,6 @@ function PhotosApp(): React.JSX.Element {
     setAnimationLayout(positions)
     setAnimationOrigin(origin)
     setAnimationDirection('close')
-
     setCurrentView('albums')
 
     requestAnimationFrame(() => {
@@ -210,12 +208,12 @@ function PhotosApp(): React.JSX.Element {
 
     const update = () => {
       if (!gridRef.current) return
-      const styles = window.getComputedStyle(gridRef.current)
-      const paddingLeft = Number.parseFloat(styles.paddingLeft || '0')
-      const paddingRight = Number.parseFloat(styles.paddingRight || '0')
+      const styles = getComputedStyle(gridRef.current)
+      const paddingLeft = parseFloat(styles.paddingLeft)
+      const paddingRight = parseFloat(styles.paddingRight)
       const innerWidth = gridRef.current.clientWidth - paddingLeft - paddingRight
       setGridWidth(Math.max(0, innerWidth))
-      setGridDpr(window.devicePixelRatio || 1)
+      setGridDpr(window.devicePixelRatio)
     }
 
     update()
