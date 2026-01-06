@@ -24,26 +24,6 @@ interface LayoutItemWithPosition {
   y: number
 }
 
-const getTransformOffset = (transform: string) => {
-  if (!transform || transform === 'none') {
-    return { x: 0, y: 0 }
-  }
-
-  const matrixMatch = transform.match(/matrix\(([^)]+)\)/)
-  if (matrixMatch) {
-    const parts = matrixMatch[1].split(',').map(value => Number.parseFloat(value))
-    return { x: parts[4] || 0, y: parts[5] || 0 }
-  }
-
-  const matrix3dMatch = transform.match(/matrix3d\(([^)]+)\)/)
-  if (matrix3dMatch) {
-    const parts = matrix3dMatch[1].split(',').map(value => Number.parseFloat(value))
-    return { x: parts[12] || 0, y: parts[13] || 0 }
-  }
-
-  return { x: 0, y: 0 }
-}
-
 const buildFixedRows = (
   photos: Photo[],
   sizeKey: GridSizeKey,
@@ -97,19 +77,13 @@ function PhotosApp(): React.JSX.Element {
     width: number
     height: number
   } | null>(null)
+  const [animationLayout, setAnimationLayout] = useState<LayoutItemWithPosition[]>([])
   const lastStackOriginRef = useRef<{
     x: number
     y: number
     width: number
     height: number
   } | null>(null)
-
-  const setStackOrigin = (origin: { x: number; y: number; width: number; height: number } | null) => {
-    setAnimationOrigin(origin)
-    if (origin) {
-      lastStackOriginRef.current = origin
-    }
-  }
 
   const toBodySpace = (rect: DOMRect) => {
     const bodyRect = bodyRef.current?.getBoundingClientRect()
@@ -132,50 +106,104 @@ function PhotosApp(): React.JSX.Element {
     return toBodySpace(rect)
   }
 
+  const calculateLayoutPositions = (): LayoutItemWithPosition[] => {
+    if (!gridRef.current || !bodyRef.current || !selectedAlbum) return []
+
+    const items: LayoutItemWithPosition[] = []
+    const bodyRect = bodyRef.current.getBoundingClientRect()
+    const styles = window.getComputedStyle(gridRef.current)
+    const paddingLeft = Number.parseFloat(styles.paddingLeft || '0')
+    const paddingTop = Number.parseFloat(styles.paddingTop || '0')
+    const containerRect = gridRef.current.getBoundingClientRect()
+    let currentY = containerRect.top - bodyRect.top + paddingTop
+
+    rows.forEach(row => {
+      let currentX = containerRect.left - bodyRect.left + paddingLeft
+
+      row.items.forEach(item => {
+        items.push({
+          photo: item.photo,
+          width: item.width,
+          height: item.height,
+          x: currentX,
+          y: currentY,
+        })
+        currentX += item.width + rowGap
+      })
+
+      currentY += row.height + rowGap
+    })
+
+    return items
+  }
+
   const openAlbum = (album: Album, event: React.MouseEvent<HTMLButtonElement>) => {
+    if (isAnimating) return
+
     gridViewRef.current?.scrollTo({ top: 0 })
     const button = event.currentTarget
     const stackElement = button.querySelector('.album-stack') as HTMLElement | null
     const rect = stackElement?.getBoundingClientRect()
 
-    if (rect) {
-      const origin = toBodySpace(rect)
-      setStackOrigin(origin)
-      if (!origin) {
-        setSelectedAlbum(album)
-        setIsAnimating(false)
-        setCurrentView('grid')
-        return
-      }
-    } else {
-      setStackOrigin(null)
+    if (!rect) {
       setSelectedAlbum(album)
-      setIsAnimating(false)
       setCurrentView('grid')
       return
     }
 
-    setSelectedAlbum(album)
-    setIsAnimating(true)
-    setAnimationDirection('open')
+    const origin = toBodySpace(rect)
+    if (!origin) {
+      setSelectedAlbum(album)
+      setCurrentView('grid')
+      return
+    }
 
-    // Switch to grid immediately; overlay handles the transition.
+    lastStackOriginRef.current = origin
+
+    setSelectedAlbum(album)
     setCurrentView('grid')
+
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        const positions = calculateLayoutPositions()
+        if (positions.length === 0) {
+          return
+        }
+
+        setAnimationLayout(positions)
+        setAnimationOrigin(origin)
+        setAnimationDirection('open')
+        setIsAnimating(true)
+      })
+    })
   }
 
   const closeAlbum = () => {
-    if (!selectedAlbum) return
-    const origin = findAlbumOrigin(selectedAlbum.id) ?? lastStackOriginRef.current
+    if (!selectedAlbum || isAnimating) return
 
+    const positions = calculateLayoutPositions()
+    if (positions.length === 0) {
+      setCurrentView('albums')
+      setSelectedAlbum(null)
+      return
+    }
+
+    const origin = findAlbumOrigin(selectedAlbum.id) ?? lastStackOriginRef.current
     if (!origin) {
       setCurrentView('albums')
       setSelectedAlbum(null)
       return
     }
 
+    setAnimationLayout(positions)
+    setAnimationOrigin(origin)
     setAnimationDirection('close')
-    setStackOrigin(origin)
-    setIsAnimating(true)
+
+    setCurrentView('albums')
+
+    requestAnimationFrame(() => {
+      setIsAnimating(true)
+    })
   }
 
   const openPhoto = (photo: Photo) => setSelectedPhoto(photo)
@@ -209,39 +237,8 @@ function PhotosApp(): React.JSX.Element {
     return buildFixedRows(selectedAlbum.photos, gridSizeKey, gridWidth, gridColumns, rowGap)
   }, [gridColumns, gridSizeKey, gridWidth, rowGap, selectedAlbum])
 
-  const layoutItemsWithPositions = useMemo(() => {
-    if (!selectedAlbum || !isAnimating || !gridRef.current || !bodyRef.current) return []
-
-    const items: LayoutItemWithPosition[] = []
-    const bodyRect = bodyRef.current.getBoundingClientRect()
-    const styles = window.getComputedStyle(gridRef.current)
-    const paddingLeft = Number.parseFloat(styles.paddingLeft || '0')
-    const paddingTop = Number.parseFloat(styles.paddingTop || '0')
-    const containerRect = gridRef.current.getBoundingClientRect()
-    const view = gridRef.current.closest('.photos-view') as HTMLElement | null
-    const viewTransform = view ? window.getComputedStyle(view).transform : 'none'
-    const { x: offsetX, y: offsetY } = getTransformOffset(viewTransform)
-    let currentY = containerRect.top - offsetY - bodyRect.top + paddingTop
-
-    rows.forEach(row => {
-      let currentX = containerRect.left - offsetX - bodyRect.left + paddingLeft
-
-      row.items.forEach(item => {
-        items.push({
-          photo: item.photo,
-          width: item.width,
-          height: item.height,
-          x: currentX,
-          y: currentY,
-        })
-        currentX += item.width + rowGap
-      })
-
-      currentY += row.height + rowGap
-    })
-
-    return items
-  }, [isAnimating, rowGap, rows, selectedAlbum])
+  const albumsViewVisible = currentView === 'albums'
+  const gridViewVisible = currentView === 'grid' && !isAnimating
 
   return (
     <div className="photos-app">
@@ -263,7 +260,10 @@ function PhotosApp(): React.JSX.Element {
       </header>
 
       <div className="photos-body" ref={bodyRef}>
-        <div className={`photos-view ${currentView === 'albums' ? 'photos-view--active' : 'photos-view--background'}`}>
+        <div
+          className={`photos-view ${albumsViewVisible ? 'photos-view--active' : 'photos-view--hidden'}`}
+          style={{ transition: isAnimating ? 'none' : undefined }}
+        >
           <div className="albums-list">
             {albums.map(album => (
               <button
@@ -298,7 +298,11 @@ function PhotosApp(): React.JSX.Element {
 
         <div
           ref={gridViewRef}
-          className={`photos-view ${currentView === 'grid' ? 'photos-view--active' : 'photos-view--hidden'}`}
+          className={`photos-view ${gridViewVisible ? 'photos-view--active' : 'photos-view--hidden'}`}
+          style={{
+            transition: isAnimating ? 'none' : undefined,
+            visibility: selectedAlbum ? 'visible' : 'hidden'
+          }}
         >
           {selectedAlbum && (
             <div
@@ -312,7 +316,7 @@ function PhotosApp(): React.JSX.Element {
                   className="photos-justified__row"
                   style={{ height: row.height }}
                 >
-                  {row.items.map((item, itemIndex) => (
+                  {row.items.map((item) => (
                     <button
                       key={item.photo.id}
                       className="photos-justified__item"
@@ -320,7 +324,6 @@ function PhotosApp(): React.JSX.Element {
                       style={{
                         width: item.width,
                         height: item.height,
-                        animationDelay: `${itemIndex * 40}ms`,
                       }}
                     >
                       <img
@@ -338,17 +341,18 @@ function PhotosApp(): React.JSX.Element {
           )}
         </div>
 
-        {isAnimating && animationOrigin && selectedAlbum && layoutItemsWithPositions.length > 0 && (
+        {isAnimating && animationOrigin && animationLayout.length > 0 && (
           <UnfurlAnimation
             origin={animationOrigin}
-            gridLayout={layoutItemsWithPositions}
+            gridLayout={animationLayout}
             sizeKey={gridSizeKey}
             direction={animationDirection}
             onComplete={() => {
               setIsAnimating(false)
               setAnimationOrigin(null)
+              setAnimationLayout([])
+
               if (animationDirection === 'close') {
-                setCurrentView('albums')
                 setSelectedAlbum(null)
               }
             }}
