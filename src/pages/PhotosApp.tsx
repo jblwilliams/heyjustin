@@ -15,58 +15,37 @@ interface LayoutRow {
   items: LayoutItem[]
 }
 
-const buildJustifiedRows = (
+const buildFixedRows = (
   photos: Photo[],
   sizeKey: GridSizeKey,
   containerWidth: number,
-  targetRowHeight: number,
+  columns: number,
   gap: number
 ): LayoutRow[] => {
   if (containerWidth <= 0) return []
 
+  const columnWidth = (containerWidth - gap * (columns - 1)) / columns
+
   const rows: LayoutRow[] = []
   let rowItems: LayoutItem[] = []
-  let rowWidthSum = 0
-
-  const orientationScale = (aspect: number) => {
-    if (aspect < 0.85) return 1.18
-    if (aspect < 1.05) return 1.08
-    if (aspect > 1.6) return 0.82
-    if (aspect > 1.25) return 0.9
-    return 1
-  }
-
-  const commitRow = (scale: number) => {
-    const items = rowItems.map(item => ({
-      ...item,
-      width: Math.round(item.width * scale),
-      height: Math.round(item.height * scale),
-    }))
-    const rowHeight = items.reduce((max, item) => Math.max(max, item.height), 0)
-    rows.push({ height: rowHeight, items })
-    rowItems = []
-    rowWidthSum = 0
-  }
 
   for (const photo of photos) {
     const size = photo.dimensions[sizeKey]
     const aspect = size.width / size.height || 1
-    const scale = orientationScale(aspect)
-    const itemHeight = targetRowHeight * scale
-    const itemWidth = aspect * itemHeight
+    const itemWidth = columnWidth
+    const itemHeight = itemWidth / aspect
     rowItems.push({ photo, width: itemWidth, height: itemHeight })
-    rowWidthSum += itemWidth
 
-    const rowWidth = rowWidthSum + gap * (rowItems.length - 1)
-    if (rowWidth >= containerWidth) {
-      const availableWidth = containerWidth - gap * (rowItems.length - 1)
-      const scale = availableWidth > 0 ? availableWidth / rowWidthSum : 1
-      commitRow(scale)
+    if (rowItems.length === columns) {
+      const rowHeight = rowItems.reduce((max, item) => Math.max(max, item.height), 0)
+      rows.push({ height: rowHeight, items: rowItems })
+      rowItems = []
     }
   }
 
   if (rowItems.length) {
-    commitRow(1)
+    const rowHeight = rowItems.reduce((max, item) => Math.max(max, item.height), 0)
+    rows.push({ height: rowHeight, items: rowItems })
   }
 
   return rows
@@ -113,13 +92,13 @@ function PhotosApp(): React.JSX.Element {
     return () => observer.disconnect()
   }, [selectedAlbum])
 
-  const targetRowHeight = gridWidth < 768 ? 160 : 210
-  const rowGap = 12
+  const rowGap = 24
   const gridSizeKey: GridSizeKey = gridDpr > 1.4 ? 'medium' : 'thumb'
+  const gridColumns = gridWidth <= 640 ? 2 : gridWidth <= 1024 ? 3 : 4
   const rows = useMemo(() => {
     if (!selectedAlbum) return []
-    return buildJustifiedRows(selectedAlbum.photos, gridSizeKey, gridWidth, targetRowHeight, rowGap)
-  }, [gridSizeKey, gridWidth, rowGap, selectedAlbum, targetRowHeight])
+    return buildFixedRows(selectedAlbum.photos, gridSizeKey, gridWidth, gridColumns, rowGap)
+  }, [gridColumns, gridSizeKey, gridWidth, rowGap, selectedAlbum])
 
   return (
     <div className="photos-app">

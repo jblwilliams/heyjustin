@@ -221,15 +221,16 @@
 .photos-justified {
   display: flex;
   flex-direction: column;
-  padding: 16px;
+  padding: var(--photos-gap);
   align-content: flex-start;
   background: #0b0b0b;
-  --photos-gap: 12px;
+  --photos-gap: 24px;
 }
 
 .photos-justified__row {
   display: flex;
   column-gap: var(--photos-gap);
+  justify-content: flex-start;
   align-items: center;
   margin-bottom: var(--photos-gap);
 }
