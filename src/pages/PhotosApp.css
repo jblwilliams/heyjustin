@@ -158,6 +158,7 @@
 .album-item--fading {
     opacity: 0;
     pointer-events: none;
+    transition: none;
 }
 
 .album-stack {
@@ -206,7 +207,7 @@
 
 .album-item--animating .album-stack {
   opacity: 0;
-  transition: opacity 0.1s ease;
+  transition: none;
 }
 
 .album-info {

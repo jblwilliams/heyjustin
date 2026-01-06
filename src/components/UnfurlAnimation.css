@@ -13,10 +13,9 @@
   top: 0;
   left: 0;
   transform-origin: center;
-  will-change: transform, opacity;
+  will-change: transform;
   transition:
-    transform var(--fly-duration) cubic-bezier(0.22, 0.61, 0.36, 1),
-    opacity var(--opacity-duration) ease-out;
+    transform var(--fly-duration) cubic-bezier(0.22, 0.61, 0.36, 1);
   transition-delay: var(--delay);
 }
 
@@ -25,7 +24,6 @@
     translate(var(--start-x), var(--start-y))
     scale(var(--start-scale))
     rotate(var(--start-rotation));
-  opacity: 0;
 }
 
 .unfurl-animation--fly .unfurl-animation__photo {
@@ -33,12 +31,6 @@
     translate(var(--end-x), var(--end-y))
     scale(var(--end-scale))
     rotate(var(--end-rotation));
-  opacity: 1;
-}
-
-.unfurl-animation--complete {
-  opacity: 0;
-  transition: opacity var(--fade-duration) ease-out;
 }
 
 .unfurl-animation__image {
