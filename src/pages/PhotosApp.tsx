@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import { albums, type Album, type Photo } from '@/data/albums'
 import { FanOutTransition } from '@/components/FanOutTransition'
 import './PhotosApp.css'
@@ -23,6 +23,8 @@ interface LayoutItemWithPosition {
   x: number
   y: number
 }
+
+const rowGap = 24
 
 const buildFixedRows = (
   photos: Photo[],
@@ -67,6 +69,7 @@ function PhotosApp(): React.JSX.Element {
   const [selectedPhoto, setSelectedPhoto] = useState<Photo | null>(null)
   const gridRef = useRef<HTMLDivElement | null>(null)
   const gridViewRef = useRef<HTMLDivElement | null>(null)
+  const [gridElement, setGridElement] = useState<HTMLDivElement | null>(null)
   const [gridWidth, setGridWidth] = useState(0)
   const [gridDpr, setGridDpr] = useState(1)
   const [isAnimating, setIsAnimating] = useState(false)
@@ -78,6 +81,10 @@ function PhotosApp(): React.JSX.Element {
     height: number
   } | null>(null)
   const [animationLayout, setAnimationLayout] = useState<LayoutItemWithPosition[]>([])
+  const [pendingOpen, setPendingOpen] = useState<{
+    album: Album
+    origin: { x: number; y: number; width: number; height: number }
+  } | null>(null)
   const lastStackOriginRef = useRef<{
     x: number
     y: number
@@ -85,7 +92,12 @@ function PhotosApp(): React.JSX.Element {
     height: number
   } | null>(null)
 
-  const toBodySpace = (rect: DOMRect) => {
+  const setGridContainerRef = useCallback((node: HTMLDivElement | null) => {
+    gridRef.current = node
+    setGridElement(node)
+  }, [])
+
+  const toBodySpace = useCallback((rect: DOMRect) => {
     const bodyRect = bodyRef.current?.getBoundingClientRect()
     if (!bodyRect) return null
     return {
@@ -94,9 +106,9 @@ function PhotosApp(): React.JSX.Element {
       width: rect.width,
       height: rect.height,
     }
-  }
+  }, [])
 
-  const findAlbumOrigin = (albumId: string) => {
+  const findAlbumOrigin = useCallback((albumId: string) => {
     const stack = document.querySelector(
       `[data-album-id="${albumId}"] .album-stack`
     )
@@ -104,9 +116,9 @@ function PhotosApp(): React.JSX.Element {
 
     if (!rect) return null
     return toBodySpace(rect)
-  }
+  }, [toBodySpace])
 
-  const measureGridLayout = () => {
+  const measureGridLayout = useCallback(() => {
     if (!gridRef.current || !bodyRef.current) return null
 
     const bodyRect = bodyRef.current.getBoundingClientRect()
@@ -127,9 +139,9 @@ function PhotosApp(): React.JSX.Element {
       innerWidth,
       dpr: window.devicePixelRatio,
     }
-  }
+  }, [])
 
-  const calculateLayoutPositions = (album: Album) => {
+  const calculateLayoutPositions = useCallback((album: Album) => {
     const metrics = measureGridLayout()
     if (!metrics) return null
 
@@ -161,10 +173,47 @@ function PhotosApp(): React.JSX.Element {
     })
 
     return { positions: items, innerWidth, dpr }
-  }
+  }, [measureGridLayout])
+
+  useLayoutEffect(() => {
+    if (!pendingOpen || isAnimating) return
+
+    const openRequest = pendingOpen
+
+    const attemptStart = () => {
+      const result = calculateLayoutPositions(openRequest.album)
+      if (!result || result.positions.length === 0) return false
+
+      setGridWidth(result.innerWidth)
+      setGridDpr(result.dpr)
+      setAnimationLayout(result.positions)
+      setAnimationOrigin(openRequest.origin)
+      setAnimationDirection('open')
+      setCurrentView('grid')
+      setIsAnimating(true)
+      setPendingOpen(null)
+      return true
+    }
+
+    if (attemptStart()) return
+    if (!gridElement) return
+
+    if (typeof ResizeObserver === 'undefined') {
+      setCurrentView('grid')
+      setPendingOpen(null)
+      return
+    }
+
+    const observer = new ResizeObserver(() => {
+      if (attemptStart()) observer.disconnect()
+    })
+    observer.observe(gridElement)
+
+    return () => observer.disconnect()
+  }, [calculateLayoutPositions, gridElement, isAnimating, pendingOpen])
 
   const openAlbum = (album: Album, event: React.MouseEvent<HTMLButtonElement>) => {
-    if (isAnimating) return
+    if (isAnimating || pendingOpen) return
 
     gridViewRef.current?.scrollTo({ top: 0 })
     const button = event.currentTarget
@@ -186,30 +235,7 @@ function PhotosApp(): React.JSX.Element {
 
     lastStackOriginRef.current = origin
     setSelectedAlbum(album)
-
-    const startAnimation = (attempt = 0) => {
-      const result = calculateLayoutPositions(album)
-      if (!result || result.positions.length === 0) {
-        if (attempt < 5) {
-          requestAnimationFrame(() => startAnimation(attempt + 1))
-        } else {
-          setCurrentView('grid')
-        }
-        return
-      }
-
-      setGridWidth(result.innerWidth)
-      setGridDpr(result.dpr)
-      setAnimationLayout(result.positions)
-      setAnimationOrigin(origin)
-      setAnimationDirection('open')
-      setCurrentView('grid')
-      setIsAnimating(true)
-    }
-
-    requestAnimationFrame(() => {
-      startAnimation()
-    })
+    setPendingOpen({ album, origin })
   }
 
   const closeAlbum = () => {
@@ -242,14 +268,13 @@ function PhotosApp(): React.JSX.Element {
   const closePhoto = () => setSelectedPhoto(null)
 
   useEffect(() => {
-    if (!gridRef.current) return
+    if (!gridElement) return
 
     const update = () => {
-      if (!gridRef.current) return
-      const styles = getComputedStyle(gridRef.current)
+      const styles = getComputedStyle(gridElement)
       const paddingLeft = parseFloat(styles.paddingLeft)
       const paddingRight = parseFloat(styles.paddingRight)
-      const innerWidth = gridRef.current.clientWidth - paddingLeft - paddingRight
+      const innerWidth = gridElement.clientWidth - paddingLeft - paddingRight
       setGridWidth(Math.max(0, innerWidth))
       setGridDpr(window.devicePixelRatio)
     }
@@ -257,11 +282,10 @@ function PhotosApp(): React.JSX.Element {
     update()
 
     const observer = new ResizeObserver(update)
-    observer.observe(gridRef.current)
+    observer.observe(gridElement)
     return () => observer.disconnect()
-  }, [selectedAlbum])
+  }, [gridElement])
 
-  const rowGap = 24
   const gridSizeKey: GridSizeKey = gridDpr > 1.4 ? 'medium' : 'thumb'
   const gridColumns = gridWidth <= 640 ? 2 : gridWidth <= 1024 ? 3 : 4
   const rows = useMemo(() => {
@@ -269,8 +293,10 @@ function PhotosApp(): React.JSX.Element {
     return buildFixedRows(selectedAlbum.photos, gridSizeKey, gridWidth, gridColumns, rowGap)
   }, [gridColumns, gridSizeKey, gridWidth, rowGap, selectedAlbum])
 
+  const isBusy = isAnimating || pendingOpen !== null
   const albumsViewVisible = currentView === 'albums' || (isAnimating && animationDirection === 'open')
   const gridViewVisible = currentView === 'grid' && !isAnimating
+  const shouldHideAlbums = pendingOpen !== null || (isAnimating && animationDirection === 'open')
 
   return (
     <div className="photos-app">
@@ -301,13 +327,13 @@ function PhotosApp(): React.JSX.Element {
               <button
                 key={album.id}
                 className={`album-item ${
-                  isAnimating && animationDirection === 'open'
+                  shouldHideAlbums
                     ? 'album-item--fading'
                     : ''
                 }`}
                 data-album-id={album.id}
                 onClick={event => openAlbum(album, event)}
-                disabled={isAnimating}
+                disabled={isBusy}
               >
                 <div className="album-stack">
                   <div
@@ -342,7 +368,7 @@ function PhotosApp(): React.JSX.Element {
           {selectedAlbum && (
             <div
               className="photos-justified"
-              ref={gridRef}
+              ref={setGridContainerRef}
               style={{ '--photos-gap': `${rowGap}px` } as React.CSSProperties}
             >
               {rows.map((row, rowIndex) => (
