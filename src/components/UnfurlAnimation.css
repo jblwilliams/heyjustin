@@ -1,7 +1,3 @@
-/* ============================================
-   Unfurl Animation
-   Classic iOS Photos stack-to-grid animation
-   ============================================ */
 
 .unfurl-animation {
   position: absolute;
@@ -27,7 +23,6 @@
   transition-delay: var(--delay);
 }
 
-/* Initial state: stacked at origin */
 .unfurl-animation--start .unfurl-animation__photo {
   transform:
     translate(var(--start-x), var(--start-y))
@@ -36,7 +31,6 @@
   opacity: 0;
 }
 
-/* Flying state: move to grid positions */
 .unfurl-animation--fly .unfurl-animation__photo {
   transform:
     translate(var(--end-x), var(--end-y))
@@ -45,7 +39,6 @@
   opacity: 1;
 }
 
-/* Complete state: fade out overlay */
 .unfurl-animation--complete {
   opacity: 0;
   transition: opacity var(--fade-duration) ease-out;

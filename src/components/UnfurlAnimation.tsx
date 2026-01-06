@@ -2,6 +2,12 @@ import { useEffect, useState } from 'react'
 import type { Photo } from '@/data/albums'
 import './UnfurlAnimation.css'
 
+const flyDuration = 580
+const fadeDuration = 160
+const opacityDuration = 420
+const stagger = 24
+const maxStagger = 220
+
 interface LayoutItem {
   photo: Photo
   width: number
@@ -27,20 +33,15 @@ export function UnfurlAnimation({
 }: UnfurlAnimationProps) {
   const [phase, setPhase] = useState<'start' | 'fly' | 'complete'>('start')
 
+  const maxDelay = Math.min(Math.max(gridLayout.length - 1, 0) * stagger, maxStagger)
+
   useEffect(() => {
-    const flyDuration = 580
-    const fadeDuration = 160
-    const stagger = 24
-    const maxStagger = 220
-    const maxDelay = Math.min(Math.max(gridLayout.length - 1, 0) * stagger, maxStagger)
     const totalFly = flyDuration + maxDelay
 
-    // Start animation immediately.
     const startTimer = requestAnimationFrame(() => {
       setPhase('fly')
     })
 
-    // Complete animation and fade out overlay.
     const completeTimer = window.setTimeout(() => {
       setPhase('complete')
     }, totalFly)
@@ -54,37 +55,24 @@ export function UnfurlAnimation({
       clearTimeout(completeTimer)
       clearTimeout(cleanupTimer)
     }
-  }, [gridLayout.length, onComplete])
-
-  const flyDuration = 580
-  const fadeDuration = 160
-  const opacityDuration = 420
-  const stagger = 24
-  const maxStagger = 220
-  const maxDelay = Math.min(Math.max(gridLayout.length - 1, 0) * stagger, maxStagger)
+  }, [gridLayout.length, onComplete, maxDelay])
 
   return (
     <div
       className={`unfurl-animation unfurl-animation--${phase}`}
-      style={
-        {
-          '--fly-duration': `${flyDuration}ms`,
-          '--fade-duration': `${fadeDuration}ms`,
-          '--opacity-duration': `${opacityDuration}ms`,
-        } as React.CSSProperties
-      }
+      style={{
+        '--fly-duration': `${flyDuration}ms`,
+        '--fade-duration': `${fadeDuration}ms`,
+        '--opacity-duration': `${opacityDuration}ms`,
+      } as React.CSSProperties}
     >
       {gridLayout.map((item, index) => {
-        // Calculate stagger delay - iOS-style wave effect.
         const delay = Math.min(
           direction === 'close' ? (gridLayout.length - 1 - index) * stagger : index * stagger,
           maxDelay
         )
 
-        // Calculate rotation for initial stack effect.
         const stackRotation = index % 3 === 0 ? -4 : index % 3 === 1 ? 3 : 0
-
-        // Calculate initial scale based on stack depth.
         const stackScale = index < 3 ? 0.25 + index * 0.05 : 0.2
         const stackX = origin.x - item.width / 2
         const stackY = origin.y - item.height / 2
@@ -101,21 +89,19 @@ export function UnfurlAnimation({
           <div
             key={item.photo.id}
             className="unfurl-animation__photo"
-            style={
-              {
-                '--start-x': `${startX}px`,
-                '--start-y': `${startY}px`,
-                '--end-x': `${endX}px`,
-                '--end-y': `${endY}px`,
-                '--start-rotation': `${startRotation}deg`,
-                '--end-rotation': `${endRotation}deg`,
-                '--start-scale': startScale,
-                '--end-scale': endScale,
-                '--delay': `${delay}ms`,
-                width: item.width,
-                height: item.height,
-              } as React.CSSProperties
-            }
+            style={{
+              '--start-x': `${startX}px`,
+              '--start-y': `${startY}px`,
+              '--end-x': `${endX}px`,
+              '--end-y': `${endY}px`,
+              '--start-rotation': `${startRotation}deg`,
+              '--end-rotation': `${endRotation}deg`,
+              '--start-scale': startScale,
+              '--end-scale': endScale,
+              '--delay': `${delay}ms`,
+              width: item.width,
+              height: item.height,
+            } as React.CSSProperties}
           >
             <img
               src={item.photo.sources[sizeKey]}
