@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { albums, type Album, type Photo } from '@/data/albums'
-import { UnfurlAnimation } from '@/components/UnfurlAnimation'
+import { FanOutTransition } from '@/components/FanOutTransition'
 import './PhotosApp.css'
 
 type GridSizeKey = 'thumb' | 'medium'
@@ -377,7 +377,7 @@ function PhotosApp(): React.JSX.Element {
         </div>
 
         {isAnimating && animationOrigin && animationLayout.length > 0 && (
-          <UnfurlAnimation
+          <FanOutTransition
             origin={animationOrigin}
             gridLayout={animationLayout}
             sizeKey={gridSizeKey}

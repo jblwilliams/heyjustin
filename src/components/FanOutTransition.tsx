@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import type { Photo } from '@/data/albums'
-import './UnfurlAnimation.css'
+import './FanOutTransition.css'
 
 const flyDuration = 580
 const stagger = 24
@@ -14,7 +14,7 @@ interface LayoutItem {
   y: number
 }
 
-interface UnfurlAnimationProps {
+interface FanOutTransitionProps {
   origin: { x: number; y: number; width: number; height: number }
   gridLayout: LayoutItem[]
   sizeKey: 'thumb' | 'medium'
@@ -23,14 +23,14 @@ interface UnfurlAnimationProps {
   onComplete: () => void
 }
 
-export function UnfurlAnimation({
+export function FanOutTransition({
   origin,
   gridLayout,
   sizeKey,
   direction = 'open',
   targetAlbumId,
   onComplete,
-}: UnfurlAnimationProps) {
+}: FanOutTransitionProps) {
   const [phase, setPhase] = useState<'start' | 'fly'>('start')
   const completionRef = useRef<HTMLDivElement | null>(null)
   const didCompleteRef = useRef(false)
@@ -110,7 +110,7 @@ export function UnfurlAnimation({
 
   return (
     <div
-      className={`unfurl-animation unfurl-animation--${phase}`}
+      className={`fan-out-transition fan-out-transition--${phase}`}
       style={{
         '--fly-duration': `${flyDuration}ms`,
       } as React.CSSProperties}
@@ -141,7 +141,7 @@ export function UnfurlAnimation({
         return (
           <div
             key={item.photo.id}
-            className="unfurl-animation__photo"
+            className="fan-out-transition__photo"
             ref={index === completionIndex ? completionRef : undefined}
             style={{
               '--start-x': `${startX}px`,
@@ -160,7 +160,7 @@ export function UnfurlAnimation({
             <img
               src={item.photo.sources[sizeKey]}
               alt={item.photo.alt}
-              className="unfurl-animation__image"
+              className="fan-out-transition__image"
             />
           </div>
         )
@@ -168,3 +168,4 @@ export function UnfurlAnimation({
     </div>
   )
 }
+
