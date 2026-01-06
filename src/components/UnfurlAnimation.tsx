@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import type { Photo } from '@/data/albums'
 import './UnfurlAnimation.css'
 
-const flyDuration = 1580
+const flyDuration = 580
 const fadeDuration = 160
 const opacityDuration = 420
 const stagger = 24
@@ -35,19 +35,15 @@ export function UnfurlAnimation({
 }: UnfurlAnimationProps) {
   const [phase, setPhase] = useState<'start' | 'fly' | 'complete'>('start')
 
-  const maxDelay = Math.min(Math.max(gridLayout.length - 1, 0) * stagger, maxStagger)
+  const maxDelay = Math.min((gridLayout.length - 1) * stagger, maxStagger)
 
   useEffect(() => {
     if (direction === 'close' && targetAlbumId) {
       const albumButton = document.querySelector(`[data-album-id="${targetAlbumId}"]`)
-      if (albumButton) {
-        albumButton.classList.add('album-item--animating')
-      }
+      albumButton?.classList.add('album-item--animating')
 
       return () => {
-        if (albumButton) {
-          albumButton.classList.remove('album-item--animating')
-        }
+        albumButton?.classList.remove('album-item--animating')
       }
     }
   }, [direction, targetAlbumId])
@@ -59,11 +55,11 @@ export function UnfurlAnimation({
       setPhase('fly')
     })
 
-    const completeTimer = window.setTimeout(() => {
+    const completeTimer = setTimeout(() => {
       setPhase('complete')
     }, totalFly)
 
-    const cleanupTimer = window.setTimeout(() => {
+    const cleanupTimer = setTimeout(() => {
       onComplete()
     }, totalFly + fadeDuration)
 
