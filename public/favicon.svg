@@ -1,10 +1,85 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" role="img" aria-label="iPhone with raindrops wallpaper">
   <defs>
-    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" style="stop-color:#667eea"/>
-      <stop offset="100%" style="stop-color:#764ba2"/>
+    <linearGradient id="phoneBody" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#2b2b2e" />
+      <stop offset="0.5" stop-color="#151517" />
+      <stop offset="1" stop-color="#0b0b0c" />
     </linearGradient>
+    <linearGradient id="phoneEdge" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#ffffff" stop-opacity="0.18" />
+      <stop offset="0.12" stop-color="#ffffff" stop-opacity="0.04" />
+      <stop offset="0.88" stop-color="#000000" stop-opacity="0.22" />
+      <stop offset="1" stop-color="#000000" stop-opacity="0.36" />
+    </linearGradient>
+
+    <!-- Simplified static iOS 6 raindrops wallpaper -->
+    <linearGradient id="wallpaper" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#4fa5b5" />
+      <stop offset="0.08" stop-color="#6aacb8" />
+      <stop offset="0.2" stop-color="#88b5bb" />
+      <stop offset="0.4" stop-color="#a0baba" />
+      <stop offset="0.6" stop-color="#afbfbf" />
+      <stop offset="0.8" stop-color="#b8c2c2" />
+      <stop offset="1" stop-color="#bec6c6" />
+    </linearGradient>
+    <radialGradient id="dropFill" cx="30%" cy="28%" r="80%">
+      <stop offset="0" stop-color="#ffffff" stop-opacity="0.26" />
+      <stop offset="0.55" stop-color="#ffffff" stop-opacity="0.14" />
+      <stop offset="1" stop-color="#ffffff" stop-opacity="0.08" />
+    </radialGradient>
+
+    <clipPath id="screenClip">
+      <rect x="24" y="14" width="52" height="72" rx="6" />
+    </clipPath>
   </defs>
-  <rect width="100" height="100" rx="22" fill="url(#bg)"/>
-  <text x="50" y="68" font-family="system-ui, -apple-system, sans-serif" font-size="48" font-weight="bold" fill="white" text-anchor="middle">JP</text>
+
+  <!-- Phone -->
+  <g>
+    <rect x="18" y="5" width="64" height="90" rx="12" fill="url(#phoneBody)" />
+    <rect x="18" y="5" width="64" height="90" rx="12" fill="url(#phoneEdge)" opacity="0.9" />
+    <rect x="20" y="7" width="60" height="86" rx="11" fill="#060607" />
+
+    <!-- Screen -->
+    <g clip-path="url(#screenClip)">
+      <rect x="24" y="14" width="52" height="72" rx="6" fill="url(#wallpaper)" />
+
+      <!-- Droplets (simplified + static) -->
+      <g>
+        <g>
+          <ellipse cx="40.1" cy="27.7" rx="8.1" ry="7.1" fill="url(#dropFill)" stroke="#17353c" stroke-opacity="0.18" stroke-width="0.8" />
+          <ellipse cx="37.3" cy="25.2" rx="2.6" ry="2.1" fill="#ffffff" fill-opacity="0.20" />
+        </g>
+        <g>
+          <ellipse cx="59.9" cy="25.4" rx="5.7" ry="5.0" fill="url(#dropFill)" stroke="#17353c" stroke-opacity="0.16" stroke-width="0.7" />
+          <ellipse cx="57.9" cy="23.6" rx="2.0" ry="1.6" fill="#ffffff" fill-opacity="0.18" />
+        </g>
+        <g>
+          <ellipse cx="53.7" cy="43.7" rx="9.4" ry="8.2" fill="url(#dropFill)" stroke="#17353c" stroke-opacity="0.18" stroke-width="0.85" />
+          <ellipse cx="50.3" cy="40.7" rx="3.2" ry="2.5" fill="#ffffff" fill-opacity="0.20" />
+        </g>
+        <g>
+          <ellipse cx="35.1" cy="50.6" rx="6.4" ry="5.7" fill="url(#dropFill)" stroke="#17353c" stroke-opacity="0.16" stroke-width="0.75" />
+          <ellipse cx="32.9" cy="48.5" rx="2.2" ry="1.8" fill="#ffffff" fill-opacity="0.18" />
+        </g>
+        <g>
+          <ellipse cx="66.1" cy="57.4" rx="7.2" ry="6.3" fill="url(#dropFill)" stroke="#17353c" stroke-opacity="0.17" stroke-width="0.8" />
+          <ellipse cx="63.5" cy="54.9" rx="2.5" ry="1.9" fill="#ffffff" fill-opacity="0.18" />
+        </g>
+        <g>
+          <ellipse cx="45.0" cy="68.9" rx="10.4" ry="9.3" fill="url(#dropFill)" stroke="#17353c" stroke-opacity="0.18" stroke-width="0.9" />
+          <ellipse cx="41.2" cy="65.3" rx="3.6" ry="2.9" fill="#ffffff" fill-opacity="0.20" />
+        </g>
+        <g>
+          <ellipse cx="64.9" cy="78" rx="5.3" ry="4.7" fill="url(#dropFill)" stroke="#17353c" stroke-opacity="0.16" stroke-width="0.7" />
+          <ellipse cx="62.9" cy="76.2" rx="1.9" ry="1.5" fill="#ffffff" fill-opacity="0.17" />
+        </g>
+      </g>
+    </g>
+
+    <!-- Speaker + camera -->
+    <rect x="44" y="9.8" width="12" height="2.2" rx="1.1" fill="#2a2a2c" opacity="0.95" />
+    <circle cx="37.8" cy="10.9" r="1.25" fill="#2a2a2c" opacity="0.95" />
+    <circle cx="37.8" cy="10.9" r="0.55" fill="#6aacb8" opacity="0.65" />
+
+  </g>
 </svg>

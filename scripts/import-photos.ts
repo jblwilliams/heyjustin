@@ -23,6 +23,7 @@ const SIZE_TARGETS = {
 } as const
 
 const projectRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
+const publicRoot = path.join(projectRoot, 'public')
 
 const normalizeTitle = (value: string) => value.trim().toLowerCase().replace(/\s+/g, ' ')
 
@@ -80,7 +81,7 @@ const readAlbumsConfig = async (): Promise<AlbumConfig[]> => {
 }
 
 const albumDirectory = (directory: string) =>
-  path.join(projectRoot, directory.replace(/^\//, ''))
+  path.join(publicRoot, directory.replace(/^\//, ''))
 
 const readImageFiles = async (dirPath: string) => {
   const entries = await fs.readdir(dirPath, { withFileTypes: true })

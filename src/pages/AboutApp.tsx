@@ -1,5 +1,12 @@
 import './AboutApp.css'
 import profilePhoto from '../assets/images/profile.jpg'
+import crownDevStudiosLogo from '../assets/images/experience/crown-dev-studios.png'
+import blockLogo from '../assets/images/experience/block.jpg'
+import staatLogo from '../assets/images/experience/staat.jpg'
+import cashAppLogo from '../assets/images/experience/cash-app.jpg'
+import handyLogo from '../assets/images/experience/handy-hq.jpg'
+import goldmanSachsLogo from '../assets/images/experience/goldman-sachs.jpg'
+import nasaLogo from '../assets/images/experience/nasa-logo.svg'
 
 type CapabilityIconName = 'mobile' | 'web' | 'api' | 'cloud' | 'security' | 'experiments' | 'data' | 'automation'
 
@@ -103,6 +110,68 @@ function AboutApp(): React.JSX.Element {
     },
   ] as const
 
+  const experiences = [
+    {
+      company: 'Crown Dev Studios',
+      logoSrc: crownDevStudiosLogo,
+      roles: [
+        { title: 'Co-Founder & Lead Engineer', dates: 'May 2021 – Present' },
+      ],
+    },
+    {
+      company: 'Block',
+      logoSrc: blockLogo,
+      roles: [
+        { title: 'Director of Engineering, Emerging Initiatives', dates: 'Dec 2021 – May 2025' },
+      ],
+    },
+    {
+      company: 'Staat',
+      logoSrc: staatLogo,
+      roles: [
+        { title: 'Advisory Board Member', dates: 'Nov 2020 – May 2022' },
+      ],
+    },
+    {
+      company: 'Cash App',
+      logoSrc: cashAppLogo,
+      roles: [
+        { title: 'Senior Engineering Manager', dates: 'Jan 2020 – Dec 2021' },
+      ],
+    },
+    {
+      company: 'Handy HQ',
+      logoSrc: handyLogo,
+      roles: [
+        { title: 'Director Of Mobile Engineering', dates: 'Jul 2019 – Jan 2020' },
+        { title: 'Engineering Manager - Mobile', dates: 'Apr 2018 – Jul 2019' },
+        { title: 'Engineering Manager - iOS', dates: 'Apr 2017 – Apr 2018' },
+        { title: 'Senior Mobile Engineer', dates: 'Feb 2015 – Apr 2017' },
+      ],
+    },
+    {
+      company: 'Goldman Sachs',
+      logoSrc: goldmanSachsLogo,
+      roles: [
+        { title: 'Software Engineer', dates: 'Jul 2011 – Feb 2015' },
+      ],
+    },
+    {
+      company: 'Goldman Sachs',
+      logoSrc: goldmanSachsLogo,
+      roles: [
+        { title: 'Summer Analyst', dates: 'Jun 2010 – Aug 2010' },
+      ],
+    },
+    {
+      company: 'NASA Goddard Space Flight Center',
+      logoSrc: nasaLogo,
+      roles: [
+        { title: 'Software Engineer', dates: 'Jun 2009 – Aug 2009' },
+      ],
+    },
+  ] as const
+
   return (
     <div className="about-app">
       <header className="about-header">
@@ -125,7 +194,7 @@ function AboutApp(): React.JSX.Element {
           </div>
 
           <h2 className="about-card__name">Justin Williams</h2>
-          <p className="about-card__title">Engineering leader • hands-on builder</p>
+          <p className="about-card__title">Engineering Leader • Hands-on Builder</p>
         </section>
 
         <div className="about-section-group about-section-group--animate" style={{ '--delay': '1' } as React.CSSProperties}>
@@ -211,28 +280,34 @@ function AboutApp(): React.JSX.Element {
           <h3 className="about-section-label">Experience</h3>
           <section className="about-section">
             <div className="about-section__list">
-              <div className="about-list-item">
-                <div className="about-list-item__icon about-list-item__icon--crown">
-                  <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                    <path d="M5 16L3 5l5.5 5L12 4l3.5 6L21 5l-2 11H5zm0 2h14v2H5v-2z"/>
-                  </svg>
+              {experiences.map((experience) => (
+                <div
+                  key={`${experience.company}-${experience.roles[0]?.title}-${experience.roles[0]?.dates}`}
+                  className="about-list-item"
+                >
+                  <div className="about-list-item__icon about-list-item__icon--logo">
+                    <img
+                      src={experience.logoSrc}
+                      alt={`${experience.company} logo`}
+                      loading="lazy"
+                    />
+                  </div>
+                  <div className="about-list-item__content">
+                    <div className="about-list-item__label">{experience.company}</div>
+                    <div className="about-experience-roles">
+                      {experience.roles.map((role) => (
+                        <div
+                          key={`${role.title}-${role.dates}`}
+                          className="about-experience-role"
+                        >
+                          <div className="about-list-item__value">{role.title}</div>
+                          <div className="about-list-item__meta">{role.dates}</div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
                 </div>
-                <div className="about-list-item__content">
-                  <div className="about-list-item__label">Crown Dev Studios</div>
-                  <div className="about-list-item__value">Co-Founder & Engineering Lead</div>
-                </div>
-              </div>
-              <div className="about-list-item">
-                <div className="about-list-item__icon about-list-item__icon--block">
-                  <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                    <path d="M3 3h18v18H3V3zm2 2v14h14V5H5zm2 2h10v10H7V7z"/>
-                  </svg>
-                </div>
-                <div className="about-list-item__content">
-                  <div className="about-list-item__label">Block (Cash App)</div>
-                  <div className="about-list-item__value">Engineering Director</div>
-                </div>
-              </div>
+              ))}
             </div>
           </section>
         </div>
