@@ -1,0 +1,76 @@
+/* ============================================
+   Unfurl Animation
+   Classic iOS Photos stack-to-grid animation
+   ============================================ */
+
+.unfurl-animation {
+  position: absolute;
+  inset: 0;
+  z-index: 1000;
+  pointer-events: none;
+  background: transparent;
+  overflow: hidden;
+  --fly-duration: 580ms;
+  --fade-duration: 160ms;
+  --opacity-duration: 420ms;
+}
+
+.unfurl-animation__photo {
+  position: absolute;
+  top: 0;
+  left: 0;
+  transform-origin: center center;
+  will-change: transform, opacity;
+  transition:
+    transform var(--fly-duration) cubic-bezier(0.22, 0.61, 0.36, 1),
+    opacity var(--opacity-duration) ease-out;
+  transition-delay: var(--delay);
+}
+
+/* Initial state: stacked at origin */
+.unfurl-animation--start .unfurl-animation__photo {
+  transform:
+    translate(var(--start-x), var(--start-y))
+    scale(var(--start-scale))
+    rotate(var(--start-rotation));
+  opacity: 0;
+}
+
+/* Flying state: move to grid positions */
+.unfurl-animation--fly .unfurl-animation__photo {
+  transform:
+    translate(var(--end-x), var(--end-y))
+    scale(var(--end-scale))
+    rotate(var(--end-rotation));
+  opacity: 1;
+}
+
+/* Complete state: fade out overlay */
+.unfurl-animation--complete {
+  opacity: 0;
+  transition: opacity var(--fade-duration) ease-out;
+}
+
+.unfurl-animation__image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  box-shadow:
+    0 0 0 3px #fff,
+    0 4px 12px rgba(0, 0, 0, 0.45);
+  display: block;
+  background: #000;
+}
+
+/* Reduce motion for accessibility */
+@media (prefers-reduced-motion: reduce) {
+  .unfurl-animation__photo {
+    transition-duration: 0.2s;
+  }
+
+  .unfurl-animation--start .unfurl-animation__photo {
+    transform:
+      translate(var(--end-x), var(--end-y))
+      scale(0.95);
+  }
+}
