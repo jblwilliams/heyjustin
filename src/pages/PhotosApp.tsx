@@ -117,21 +117,23 @@ function PhotosApp(): React.JSX.Element {
     const containerRect = gridRef.current.getBoundingClientRect()
     let currentY = containerRect.top - bodyRect.top + paddingTop
 
-    rows.forEach(row => {
+    rows.forEach((row, rowIndex) => {
       let currentX = containerRect.left - bodyRect.left + paddingLeft
 
       row.items.forEach(item => {
+        const verticalOffset = (row.height - item.height) / 2
+
         items.push({
           photo: item.photo,
           width: item.width,
           height: item.height,
           x: currentX,
-          y: currentY,
+          y: currentY + verticalOffset,
         })
         currentX += item.width + rowGap
       })
 
-      currentY += row.height + rowGap
+      currentY += row.height + (rowIndex < rows.length - 1 ? rowGap : 0)
     })
 
     return items
@@ -161,7 +163,6 @@ function PhotosApp(): React.JSX.Element {
     lastStackOriginRef.current = origin
 
     setSelectedAlbum(album)
-    setCurrentView('grid')
 
     requestAnimationFrame(() => {
       requestAnimationFrame(() => {
@@ -173,6 +174,7 @@ function PhotosApp(): React.JSX.Element {
         setAnimationLayout(positions)
         setAnimationOrigin(origin)
         setAnimationDirection('open')
+        setCurrentView('grid')
         setIsAnimating(true)
       })
     })
@@ -231,7 +233,7 @@ function PhotosApp(): React.JSX.Element {
     return buildFixedRows(selectedAlbum.photos, gridSizeKey, gridWidth, gridColumns, rowGap)
   }, [gridColumns, gridSizeKey, gridWidth, rowGap, selectedAlbum])
 
-  const albumsViewVisible = currentView === 'albums'
+  const albumsViewVisible = currentView === 'albums' || (isAnimating && animationDirection === 'open')
   const gridViewVisible = currentView === 'grid' && !isAnimating
 
   return (
@@ -262,7 +264,11 @@ function PhotosApp(): React.JSX.Element {
             {albums.map(album => (
               <button
                 key={album.id}
-                className="album-item"
+                className={`album-item ${
+                  isAnimating && animationDirection === 'open'
+                    ? 'album-item--fading'
+                    : ''
+                }`}
                 data-album-id={album.id}
                 onClick={event => openAlbum(album, event)}
                 disabled={isAnimating}

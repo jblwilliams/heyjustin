@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import type { Photo } from '@/data/albums'
 import './UnfurlAnimation.css'
 
-const flyDuration = 580
+const flyDuration = 1580
 const fadeDuration = 160
 const opacityDuration = 420
 const stagger = 24

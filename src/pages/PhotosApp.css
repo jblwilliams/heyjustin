@@ -127,7 +127,6 @@
     inset: 0;
     overflow-y: auto;
     background: #000;
-    transition: opacity 0.2s ease;
 }
 
 .photos-view--active { opacity: 1; z-index: 1; }
@@ -153,6 +152,12 @@
     border: none;
     padding: 0;
     cursor: pointer;
+    transition: opacity 0.3s ease;
+}
+
+.album-item--fading {
+    opacity: 0;
+    pointer-events: none;
 }
 
 .album-stack {
@@ -250,12 +255,12 @@
   padding: 0;
   background: transparent;
   cursor: pointer;
-  transition: transform 0.15s ease;
   box-shadow: 0 4px 12px rgba(0,0,0,0.45);
 }
 
 .photos-justified__item:hover {
   transform: translateY(-1px);
+  transition: transform 0.15s ease;
 }
 
 .photos-justified__image {

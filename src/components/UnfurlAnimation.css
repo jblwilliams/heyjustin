@@ -55,7 +55,6 @@
   background: #000;
 }
 
-/* Reduce motion for accessibility */
 @media (prefers-reduced-motion: reduce) {
   .unfurl-animation__photo {
     transition-duration: 0.2s;
