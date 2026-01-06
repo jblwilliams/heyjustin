@@ -6,16 +6,13 @@
   pointer-events: none;
   background: transparent;
   overflow: hidden;
-  --fly-duration: 580ms;
-  --fade-duration: 160ms;
-  --opacity-duration: 420ms;
 }
 
 .unfurl-animation__photo {
   position: absolute;
   top: 0;
   left: 0;
-  transform-origin: center center;
+  transform-origin: center;
   will-change: transform, opacity;
   transition:
     transform var(--fly-duration) cubic-bezier(0.22, 0.61, 0.36, 1),
