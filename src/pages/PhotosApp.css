@@ -199,6 +199,11 @@
     transform: scale(1.02);
 }
 
+.album-item--animating .album-stack {
+  opacity: 0;
+  transition: opacity 0.1s ease;
+}
+
 .album-info {
     text-align: center;
 }

@@ -21,6 +21,7 @@ interface UnfurlAnimationProps {
   gridLayout: LayoutItem[]
   sizeKey: 'thumb' | 'medium'
   direction?: 'open' | 'close'
+  targetAlbumId?: string
   onComplete: () => void
 }
 
@@ -29,11 +30,27 @@ export function UnfurlAnimation({
   gridLayout,
   sizeKey,
   direction = 'open',
+  targetAlbumId,
   onComplete,
 }: UnfurlAnimationProps) {
   const [phase, setPhase] = useState<'start' | 'fly' | 'complete'>('start')
 
   const maxDelay = Math.min(Math.max(gridLayout.length - 1, 0) * stagger, maxStagger)
+
+  useEffect(() => {
+    if (direction === 'close' && targetAlbumId) {
+      const albumButton = document.querySelector(`[data-album-id="${targetAlbumId}"]`)
+      if (albumButton) {
+        albumButton.classList.add('album-item--animating')
+      }
+
+      return () => {
+        if (albumButton) {
+          albumButton.classList.remove('album-item--animating')
+        }
+      }
+    }
+  }, [direction, targetAlbumId])
 
   useEffect(() => {
     const totalFly = flyDuration + maxDelay
@@ -73,15 +90,19 @@ export function UnfurlAnimation({
         )
 
         const stackRotation = index % 3 === 0 ? -4 : index % 3 === 1 ? 3 : 0
-        const stackScale = index < 3 ? 0.25 + index * 0.05 : 0.2
+
+        const scaleX = origin.width / item.width
+        const scaleY = origin.height / item.height
+        const uniformScale = Math.min(scaleX, scaleY) * 0.85
+
         const stackX = origin.x - item.width / 2
         const stackY = origin.y - item.height / 2
         const startX = direction === 'close' ? item.x : stackX
         const startY = direction === 'close' ? item.y : stackY
         const endX = direction === 'close' ? stackX : item.x
         const endY = direction === 'close' ? stackY : item.y
-        const startScale = direction === 'close' ? 1 : stackScale
-        const endScale = direction === 'close' ? stackScale : 1
+        const startScale = direction === 'close' ? 1 : uniformScale
+        const endScale = direction === 'close' ? uniformScale : 1
         const startRotation = direction === 'close' ? 0 : stackRotation
         const endRotation = direction === 'close' ? stackRotation : 0
 

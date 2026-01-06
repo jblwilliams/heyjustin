@@ -99,7 +99,7 @@ function PhotosApp(): React.JSX.Element {
   const findAlbumOrigin = (albumId: string) => {
     const stack = document.querySelector(
       `[data-album-id="${albumId}"] .album-stack`
-    ) as HTMLElement | null
+    )
     const rect = stack?.getBoundingClientRect()
 
     if (!rect) return null
@@ -142,7 +142,7 @@ function PhotosApp(): React.JSX.Element {
 
     gridViewRef.current?.scrollTo({ top: 0 })
     const button = event.currentTarget
-    const stackElement = button.querySelector('.album-stack') as HTMLElement | null
+    const stackElement = button.querySelector('.album-stack')
     const rect = stackElement?.getBoundingClientRect()
 
     if (!rect) {
@@ -182,14 +182,8 @@ function PhotosApp(): React.JSX.Element {
     if (!selectedAlbum || isAnimating) return
 
     const positions = calculateLayoutPositions()
-    if (positions.length === 0) {
-      setCurrentView('albums')
-      setSelectedAlbum(null)
-      return
-    }
-
     const origin = findAlbumOrigin(selectedAlbum.id) ?? lastStackOriginRef.current
-    if (!origin) {
+    if (!origin || positions.length === 0) {
       setCurrentView('albums')
       setSelectedAlbum(null)
       return
@@ -301,7 +295,6 @@ function PhotosApp(): React.JSX.Element {
           className={`photos-view ${gridViewVisible ? 'photos-view--active' : 'photos-view--hidden'}`}
           style={{
             transition: isAnimating ? 'none' : undefined,
-            visibility: selectedAlbum ? 'visible' : 'hidden'
           }}
         >
           {selectedAlbum && (
@@ -347,6 +340,7 @@ function PhotosApp(): React.JSX.Element {
             gridLayout={animationLayout}
             sizeKey={gridSizeKey}
             direction={animationDirection}
+            targetAlbumId={animationDirection === 'close' ? selectedAlbum?.id : undefined}
             onComplete={() => {
               setIsAnimating(false)
               setAnimationOrigin(null)
