@@ -59,21 +59,3 @@ export interface WallpaperProps {
   /** Color variant */
   variant?: 'default' | 'dark';
 }
-
-/**
- * Available renderer types
- */
-export type RendererType =
-  | 'svg'
-  | 'canvas'
-  | 'webgl'
-  | 'rainyday'
-  | 'physics'
-  | 'physics-pixel'
-  | 'physics-screenspace'
-  | 'babylon';
-
-/**
- * Renderer component type
- */
-export type RendererComponent = React.FC<RendererProps>;

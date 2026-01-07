@@ -232,7 +232,7 @@ const RainPlane: React.FC<{ width: number; height: number }> = ({ width, height 
   );
 };
 
-export const PhysicsRendererScreenSpace: React.FC<RendererProps> = ({ width, height, className }) => {
+export const RainPhysicsRenderer: React.FC<RendererProps> = ({ width, height, className }) => {
   return (
     <div
       className={className}
@@ -251,4 +251,4 @@ export const PhysicsRendererScreenSpace: React.FC<RendererProps> = ({ width, hei
   );
 };
 
-export default PhysicsRendererScreenSpace;
+export default RainPhysicsRenderer;

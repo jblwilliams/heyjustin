@@ -4,4 +4,4 @@
 
 export { Wallpaper, default } from './Wallpaper';
 export { createDrops, createStreaks } from './raindrops';
-export type { Drop, WallpaperProps, RendererType, RendererProps } from './types';
+export type { Drop, WallpaperProps, RendererProps } from './types';

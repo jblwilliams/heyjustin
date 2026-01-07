@@ -2,75 +2,21 @@
  * Wallpaper Component
  *
  * A scalable recreation of the iconic iOS 6 water droplet wallpaper.
- * Supports multiple rendering backends selectable via environment variable:
- *
- * VITE_WALLPAPER_RENDERER=svg     - SVG with gradients (default)
- * VITE_WALLPAPER_RENDERER=canvas  - Canvas 2D
- * VITE_WALLPAPER_RENDERER=webgl   - Three.js/WebGL
- * VITE_WALLPAPER_RENDERER=rainyday - rainyday.js library
- * VITE_WALLPAPER_RENDERER=physics - Shader rain (clamped scale)
- * VITE_WALLPAPER_RENDERER=physics-pixel - Shader rain (height-locked scale)
- * VITE_WALLPAPER_RENDERER=physics-screenspace - Shader rain (screen-space scale)
- * VITE_WALLPAPER_RENDERER=babylon - Babylon.js shader renderer
- *
- * VITE_WALLPAPER_THUNDER=true/false - Enable lightning/thunder in shader renderers
+ * VITE_WALLPAPER_THUNDER=true/false - Enable lightning/thunder in shader renderer
  * VITE_WALLPAPER_FADE_SECONDS=10 - Fade-in duration (0 disables)
- * VITE_WALLPAPER_ZOOM=true/false - Enable subtle zoom drift in shader renderers
+ * VITE_WALLPAPER_ZOOM=true/false - Enable subtle zoom drift in shader renderer
  */
 
 import React, { useMemo, useRef, useEffect, useState } from 'react';
 import './Wallpaper.css';
 import { createDrops } from './raindrops';
-import {
-  SVGRenderer,
-  CanvasRenderer,
-  WebGLRenderer,
-  RainyDayRenderer,
-  PhysicsRenderer,
-  PhysicsRendererPixel,
-  PhysicsRendererScreenSpace,
-  BabylonRenderer
-} from './renderers';
-import type { WallpaperProps, RendererType, RendererComponent, Drop } from './types';
-
-/**
- * Get the renderer type from environment variable
- */
-const getRendererType = (): RendererType => {
-  const env = import.meta.env.VITE_WALLPAPER_RENDERER as string | undefined;
-  if (
-    env === 'canvas' ||
-    env === 'webgl' ||
-    env === 'rainyday' ||
-    env === 'svg' ||
-    env === 'physics' ||
-    env === 'physics-pixel' ||
-    env === 'physics-screenspace' ||
-    env === 'babylon'
-  ) {
-    return env;
-  }
-  return 'svg'; // Default fallback
-};
-
-/**
- * Map of renderer types to components
- */
-const renderers: Record<RendererType, RendererComponent> = {
-  svg: SVGRenderer,
-  canvas: CanvasRenderer,
-  webgl: WebGLRenderer,
-  rainyday: RainyDayRenderer,
-  physics: PhysicsRenderer,
-  'physics-pixel': PhysicsRendererPixel,
-  'physics-screenspace': PhysicsRendererScreenSpace,
-  babylon: BabylonRenderer,
-};
+import { RainPhysicsRenderer } from './renderers/RainPhysicsRenderer';
+import type { WallpaperProps, Drop } from './types';
 
 /**
  * Main Wallpaper Component
  *
- * Renders the iOS 6 raindrop wallpaper using the configured renderer.
+ * Renders the iOS 6 raindrop wallpaper.
  */
 export const Wallpaper: React.FC<WallpaperProps> = ({
   children,
@@ -82,18 +28,13 @@ export const Wallpaper: React.FC<WallpaperProps> = ({
   const containerRef = useRef<HTMLDivElement>(null);
   const [dimensions, setDimensions] = useState({ width: 640, height: 960 });
 
-  // Get the renderer component based on env var
-  const rendererType = getRendererType();
-  console.log('🎨 Active renderer:', rendererType); // See what's active
-  const Renderer = renderers[rendererType];
-
   // Generate drops (memoized for performance)
   const drops = useMemo<Drop[]>(
     () => createDrops(dropCount, seed),
     [dropCount, seed]
   );
 
-  // Track container dimensions for renderers that need them
+  // Track container dimensions for the renderer
   useEffect(() => {
     const updateDimensions = () => {
       if (containerRef.current) {
@@ -124,26 +65,7 @@ export const Wallpaper: React.FC<WallpaperProps> = ({
 
   return (
     <div ref={containerRef} className={containerClasses}>
-      {/* Renderer indicator (dev only) */}
-      {import.meta.env.DEV && (
-        <div
-          style={{
-            position: 'absolute',
-            top: 4,
-            right: 4,
-            fontSize: 9,
-            color: 'rgba(255,255,255,0.4)',
-            zIndex: 999,
-            fontFamily: 'monospace',
-            pointerEvents: 'none',
-          }}
-        >
-          {rendererType}
-        </div>
-      )}
-
-      {/* Render drops using selected renderer */}
-      <Renderer
+      <RainPhysicsRenderer
         drops={drops}
         width={dimensions.width}
         height={dimensions.height}
