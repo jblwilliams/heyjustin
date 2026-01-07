@@ -33,6 +33,7 @@ bun-cache
 # Cursor / IDE tooling
 .cursor
 .history
+.claude
 
 # Editor directories and files
 .vscode/*
