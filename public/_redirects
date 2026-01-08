@@ -1,0 +1,6 @@
+# Cloudflare Pages SPA fallback
+/assets/* /assets/:splat 200
+/images/* /images/:splat 200
+/favicon.svg /favicon.svg 200
+
+/* /index.html 200

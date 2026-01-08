@@ -7,7 +7,7 @@ import {
   type CSSProperties,
 } from 'react'
 import {
-  HashRouter as Router,
+  BrowserRouter as Router,
   Routes,
   Route,
   useNavigate,
@@ -18,6 +18,7 @@ import HomeScreen from './pages/HomeScreen'
 import NotesApp from './pages/NotesApp'
 import AboutApp from './pages/AboutApp'
 import PhotosApp from './pages/PhotosApp'
+import { notes } from '@/data/notes'
 import { Wallpaper } from './components/Wallpaper'
 import './styles/variables.css'
 import './App.css'
@@ -29,6 +30,7 @@ function AppContent(): React.JSX.Element {
   const navigate = useNavigate()
   const location = useLocation()
   const screenRef = useRef<HTMLDivElement | null>(null)
+  const baseTitleRef = useRef<string>(document.title)
 
   const [time, setTime] = useState<Date>(new Date())
   const [animationState, setAnimationState] = useState<AnimationState>('idle')
@@ -41,6 +43,35 @@ function AppContent(): React.JSX.Element {
   }, [])
 
   const isHome = location.pathname === '/'
+
+  useEffect(() => {
+    const baseTitle = baseTitleRef.current || 'Justin Williams'
+
+    const setTitle = (prefix?: string): void => {
+      document.title = prefix ? `${prefix} — ${baseTitle}` : baseTitle
+    }
+
+    if (location.pathname === '/') return setTitle()
+    if (location.pathname === '/about') return setTitle('About')
+    if (location.pathname === '/photos') return setTitle('Photos')
+    if (location.pathname === '/notes') return setTitle('Notes')
+
+    if (location.pathname.startsWith('/notes/')) {
+      const rawSlug = location.pathname.slice('/notes/'.length)
+      const slug = (() => {
+        try {
+          return decodeURIComponent(rawSlug)
+        } catch {
+          return rawSlug
+        }
+      })()
+
+      const note = notes.find(n => n.slug === slug)
+      return setTitle(note?.title ?? 'Notes')
+    }
+
+    return setTitle()
+  }, [location.pathname])
 
   const openApp = useCallback(
     (appName: string, path: string, event: MouseEvent<HTMLElement>): void => {
