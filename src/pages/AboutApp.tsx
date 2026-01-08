@@ -1,5 +1,4 @@
 import './AboutApp.css'
-import profilePhoto from '../assets/images/profile.jpg'
 import crownDevStudiosLogo from '../assets/images/experience/crown-dev-studios.png'
 import blockLogo from '../assets/images/experience/block.jpg'
 import staatLogo from '../assets/images/experience/staat.jpg'
@@ -186,7 +185,7 @@ function AboutApp(): React.JSX.Element {
         <section className="about-card about-card--animate" style={{ '--delay': '0' } as React.CSSProperties}>
           <div className="about-card__photo">
             <img
-              src={profilePhoto}
+              src="/images/profile.jpg"
               alt="Justin Williams"
               className="about-card__photo-image"
             />
