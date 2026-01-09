@@ -33,12 +33,12 @@
   background-image: linear-gradient(
     180deg,
     var(--wallpaper-top) 0%,
-    var(--wallpaper-upper) 8%,
-    var(--wallpaper-mid-upper) 20%,
-    var(--wallpaper-mid) 40%,
-    var(--wallpaper-mid-lower) 60%,
-    var(--wallpaper-lower) 80%,
-    var(--wallpaper-bottom) 100%
+    var(--wallpaper-upper) 6%,
+    var(--wallpaper-mid-upper) 16%,
+    var(--wallpaper-mid) 36%,
+    var(--wallpaper-mid-lower) 56%,
+    var(--wallpaper-lower) 76%,
+    var(--wallpaper-bottom) 92%
   );
 }
 

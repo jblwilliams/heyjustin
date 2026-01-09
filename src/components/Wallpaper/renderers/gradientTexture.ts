@@ -1,16 +1,29 @@
 import * as THREE from 'three';
 
-export const createWallpaperGradientTexture = (width = 640, height = 960) => {
+const readCssVar = (name: string, fallback: string): string => {
+  if (typeof window === 'undefined' || typeof document === 'undefined') return fallback;
+  const wallpaperElement = document.querySelector('.wallpaper-container');
+  const source = (wallpaperElement instanceof Element ? wallpaperElement : document.documentElement) as Element;
+  const value = getComputedStyle(source).getPropertyValue(name).trim();
+  return value || fallback;
+};
+
+export const createWallpaperGradientTexture = (width = 512, height = 1024) => {
   const canvas = document.createElement('canvas');
   canvas.width = width;
   canvas.height = height;
   const ctx = canvas.getContext('2d')!;
 
   const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
-  gradient.addColorStop(0, '#d1d8d9');
-  gradient.addColorStop(0.25, '#c9d0d1');
-  gradient.addColorStop(0.6, '#bcc4c4');
-  gradient.addColorStop(1, '#b5bcbc');
+  // Mirror `src/components/Wallpaper/Wallpaper.css` so the CSS fallback and the
+  // shader renderer don't "pop" between two different gradients on first paint.
+  gradient.addColorStop(0.0, readCssVar('--wallpaper-top', '#4fa5b5'));
+  gradient.addColorStop(0.06, readCssVar('--wallpaper-upper', '#6aacb8'));
+  gradient.addColorStop(0.16, readCssVar('--wallpaper-mid-upper', '#88b5bb'));
+  gradient.addColorStop(0.36, readCssVar('--wallpaper-mid', '#a0baba'));
+  gradient.addColorStop(0.56, readCssVar('--wallpaper-mid-lower', '#afbfbf'));
+  gradient.addColorStop(0.76, readCssVar('--wallpaper-lower', '#b8c2c2'));
+  gradient.addColorStop(0.92, readCssVar('--wallpaper-bottom', '#bec6c6'));
 
   ctx.fillStyle = gradient;
   ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -18,7 +31,10 @@ export const createWallpaperGradientTexture = (width = 640, height = 960) => {
   const texture = new THREE.CanvasTexture(canvas);
   texture.wrapS = THREE.ClampToEdgeWrapping;
   texture.wrapT = THREE.ClampToEdgeWrapping;
-  texture.minFilter = THREE.LinearFilter;
+  // `texLod()` in the shader expects mipmaps to exist for higher "blur" levels.
+  // Using a power-of-two canvas keeps WebGL1 + WebGL2 happy here.
+  texture.generateMipmaps = true;
+  texture.minFilter = THREE.LinearMipmapLinearFilter;
   texture.magFilter = THREE.LinearFilter;
   texture.colorSpace = THREE.SRGBColorSpace;
   texture.needsUpdate = true;
