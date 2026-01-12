@@ -34,7 +34,8 @@ const noteFiles = import.meta.glob<string>('../content/notes/*.md', {
  * Example: "2024-11-28" -> "November 28, 2024"
  */
 function formatDate(dateIso: string): string {
-  const dateObj = new Date(dateIso)
+  const [year, month, day] = dateIso.split('-').map(Number)
+  const dateObj = new Date(year, month - 1, day)
   return dateObj.toLocaleDateString('en-US', {
     year: 'numeric',
     month: 'long',
