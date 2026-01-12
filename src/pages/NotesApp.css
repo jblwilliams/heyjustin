@@ -278,13 +278,16 @@
 .notes-list {
   display: flex;
   flex-direction: column;
+  /* Match the rendered note baseline alignment */
+  padding-top: var(--notes-baseline-offset);
 }
 
 .notes-list__item {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  padding: 14px 32px 14px 0;
+  /* Keep each row snapped to the paper lines (2 lines per item) */
+  padding: 0 32px 0 0;
   background: none;
   border: none;
   border-bottom: 1px solid rgba(0, 0, 0, 0.1);
@@ -321,9 +324,13 @@
   font-size: 17px;
   font-weight: 600;
   color: var(--notes-text-primary);
-  margin-bottom: 3px;
-  line-height: 1.3;
+  margin-bottom: 0;
+  line-height: var(--notes-line-height);
   letter-spacing: -0.01em;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .notes-list__item-meta {
@@ -331,8 +338,10 @@
   gap: 10px;
   font-size: 14px;
   color: var(--notes-text-secondary);
-  line-height: 1.4;
+  line-height: var(--notes-line-height);
   font-family: var(--font-notes-body);
+  width: 100%;
+  min-width: 0; /* allow preview to ellipsize instead of overflowing under the arrow */
 }
 
 .notes-list__item-date {
@@ -342,6 +351,8 @@
 }
 
 .notes-list__item-preview {
+  flex: 1;
+  min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
