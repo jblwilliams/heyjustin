@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import { notes, type Note } from '@/data/notes'
+import { markdownComponents } from '@/components/embeds'
 import './NotesApp.css'
 
 function NotesApp(): React.JSX.Element {
@@ -106,7 +107,10 @@ function NotesApp(): React.JSX.Element {
             <div className="notes-content">
               <time className="notes-content__date">{selectedNote.date}</time>
               <div className="notes-content__text">
-                <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                <ReactMarkdown
+                  remarkPlugins={[remarkGfm]}
+                  components={markdownComponents}
+                >
                   {selectedNote.content}
                 </ReactMarkdown>
               </div>

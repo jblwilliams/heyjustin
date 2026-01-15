@@ -8,6 +8,7 @@
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "import-photos": "tsx scripts/import-photos.ts",
+    "fetch-embeds": "tsx scripts/fetch-embeds.ts",
     "preview": "vite preview",
     "typecheck": "tsc --noEmit"
   },
