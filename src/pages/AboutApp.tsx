@@ -193,7 +193,7 @@ function AboutApp(): React.JSX.Element {
           </div>
 
           <h2 className="about-card__name">Justin Williams</h2>
-          <p className="about-card__title">Engineering Leader • Hands-on Builder</p>
+          <p className="about-card__title">Founder · ish | Human Centered AI Product Building | Ex-Director of Engineering @ Block, Cash App, Handy</p>
         </section>
 
         <div className="about-section-group about-section-group--animate" style={{ '--delay': '1' } as React.CSSProperties}>
@@ -201,20 +201,20 @@ function AboutApp(): React.JSX.Element {
           <section className="about-section">
             <div className="about-section__content">
               <p>
-                I build products where reliability, security, and good UX all matter.
-                I’ve spent 15+ years shipping mobile apps, backend systems, and
-                developer platforms at startups and large companies.
+                I'm currently focused on building AI products and tools that center around the human experience. My thesis is
+                that as technology becomes more powerful, we need better UX to unlock personal experiences and human
+                creativity. We need a rethinking of the user experience as drastic as mobile was and I want to solve that
+                problem with craft and user empathy.
               </p>
               <p>
-                Most recently at Block (Cash App), I led teams working across Bitcoin
-                products, growth, and trust — from secure systems that protect
-                customer funds to experimentation and fraud prevention.
+                Through Crown Dev Studios, I partner on strategy and product engineering with companies ranging from 25 years
+                old to seed improving developer experience and shipping new features.
               </p>
               <p>
-                Now I’m co-founder of Crown Dev Studios, partnering with founders
-                and teams on architecture, integrations, and building end-to-end
-                products. I’m especially interested in practical automation and
-                AI tooling that fits into real workflows (without the hype).
+                Previously, I was Director of Engineering at Block, leading multidisciplinary teams across mobile, backend,
+                web, security, and cryptography, shipping 0→1 initiatives and scaling global reach from 8 to 95 countries.
+                Earlier roles include senior engineering leadership at Cash App and Handy (Series B → Acquisition), with deep
+                roots in mobile and full-stack product delivery.
               </p>
             </div>
           </section>
