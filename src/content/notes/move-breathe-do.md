@@ -1,7 +1,7 @@
 ---
 slug: move-breathe-do
 title: Move. Breathe. Do.
-date: 2025-01-15
+date: 2026-01-15
 preview: "I've been debating writing my thoughts out in the most vulnerable way possible..."
 ---
 
